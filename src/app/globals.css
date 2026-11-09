@@ -1,0 +1,256 @@
+@import "tailwindcss";
+
+/* Light is the default; dark follows the OS setting unless the user picked a theme (data-theme on <html>, see ThemeToggle). */
+@theme {
+  --color-bg: #f7f8fa;
+  --color-card: #ffffff;
+  --color-card-2: #f1f4f8;
+  --color-line: rgb(15 23 42 / 0.09);
+  --color-line-2: rgb(15 23 42 / 0.16);
+  --color-fg: #0b1220;
+  --color-muted: #475569;
+  --color-dim: #5b6b80;
+  --color-accent: #047857;
+  --color-accent-h: #065f46;
+  --color-accent-ink: #ffffff;
+  --color-danger: #dc2626;
+  --color-danger-ink: #ffffff;
+  --color-shade: rgb(15 23 42 / 0.05);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  color-scheme: light;
+  --card-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 12px 32px -20px rgb(15 23 42 / 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-bg: #0b1220;
+    --color-card: #111827;
+    --color-card-2: #0e1626;
+    --color-line: rgb(255 255 255 / 0.08);
+    --color-line-2: rgb(255 255 255 / 0.16);
+    --color-fg: #ffffff;
+    --color-muted: #94a3b8;
+    --color-dim: #7d8ba1;
+    --color-accent: #14d39a;
+    --color-accent-h: #18e6a8;
+    --color-accent-ink: #03271b;
+    --color-danger: #f87171;
+    --color-danger-ink: #1b0606;
+    --color-shade: rgb(0 0 0 / 0.25);
+    --card-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03), 0 12px 32px -18px rgb(0 0 0 / 0.6);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #0b1220;
+  --color-card: #111827;
+  --color-card-2: #0e1626;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-2: rgb(255 255 255 / 0.16);
+  --color-fg: #ffffff;
+  --color-muted: #94a3b8;
+  --color-dim: #7d8ba1;
+  --color-accent: #14d39a;
+  --color-accent-h: #18e6a8;
+  --color-accent-ink: #03271b;
+  --color-danger: #f87171;
+  --color-danger-ink: #1b0606;
+  --color-shade: rgb(0 0 0 / 0.25);
+  --card-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03), 0 12px 32px -18px rgb(0 0 0 / 0.6);
+}
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 {
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+/* layered so component rules like .input:focus can replace it */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .card {
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    border-radius: 18px;
+    box-shadow: var(--card-shadow);
+  }
+  .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    font-weight: 500;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 12px;
+    border: 1px solid var(--color-line-2);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s, border-color 0.15s;
+  }
+  .btn:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-fg) 5%, transparent);
+    transform: translateY(-1px);
+  }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    height: 52px;
+    padding: 0 22px;
+    border-radius: 14px;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-ink);
+    font-weight: 600;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-accent-h);
+    border-color: var(--color-accent-h);
+    transform: translateY(-2px);
+  }
+  .btn-sm {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+  .btn-ghost {
+    border-color: transparent;
+    color: var(--color-muted);
+  }
+  .btn-danger {
+    color: var(--color-danger);
+    border-color: color-mix(in srgb, var(--color-danger) 30%, transparent);
+  }
+  .icon-btn {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--color-line);
+    color: var(--color-muted);
+    cursor: pointer;
+  }
+  .icon-btn:hover:not(:disabled) {
+    color: var(--color-fg);
+    border-color: var(--color-line-2);
+  }
+  .icon-btn:disabled {
+    opacity: 0.35;
+  }
+  .input {
+    height: 56px;
+    width: 100%;
+    padding: 0 16px;
+    border-radius: 14px;
+    border: 1px solid var(--color-line-2);
+    background: var(--color-card-2);
+    color: var(--color-fg);
+    font-size: 15px;
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 14%, transparent);
+  }
+  textarea.input {
+    height: auto;
+    min-height: 84px;
+    padding: 14px 16px;
+    resize: vertical;
+  }
+  .input-sm {
+    height: 42px;
+    border-radius: 10px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+  .pill {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 11px;
+    border: 1px solid var(--color-line-2);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .pill:hover {
+    background: color-mix(in srgb, var(--color-fg) 5%, transparent);
+  }
+  /* same selected look as day and service tiles: accent border, light accent tint */
+  .pill[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-fg);
+    border-color: var(--color-accent);
+  }
+  .empty {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 18px;
+    border: 1px dashed var(--color-line-2);
+    border-radius: 14px;
+    color: var(--color-muted);
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+html {
+  scroll-behavior: smooth;
+}
+
+/* Fehlerseiten: Schere schneidet durch die Zahl, Haare fallen */
+@layer components {
+  .snip-scissors { animation: snip-move 3.2s ease-in-out infinite; }
+  .snip-blade-a, .snip-blade-b { transform-origin: 8px 12px; animation: snip-cut 0.4s ease-in-out infinite alternate; }
+  .snip-blade-b { animation-direction: alternate-reverse; }
+  .snip-hair { opacity: 0; animation: snip-fall 3.2s ease-in infinite; }
+  @keyframes snip-move { 0% { transform: translate(-10%, -50%); } 50% { transform: translate(560%, -50%); } 100% { transform: translate(-10%, -50%); } }
+  @keyframes snip-cut { from { transform: rotate(-9deg); } to { transform: rotate(9deg); } }
+  @keyframes snip-fall { 0% { opacity: 0; transform: translateY(0) rotate(0); } 15% { opacity: 1; } 60% { opacity: 0.8; } 100% { opacity: 0; transform: translateY(48px) rotate(70deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .snip-scissors, .snip-blade-a, .snip-blade-b, .snip-hair { animation: none; }
+    .snip-scissors { transform: translate(260%, -50%); }
+  }
+}
