@@ -2,7 +2,7 @@
 
 **Termine im Takt.** Online-Terminbuchung, Kalender und Kundenkartei für Werkstätten (im Umbau aus der Trimtable-Vorlage).
 
-Live: [boxentakt.de](https://boxentakt.de) · Beispiel-Buchungsseite: [boxentakt.de/good-hair](https://boxentakt.de/good-hair)
+Domain geplant: boxentakt.de (noch nicht live).
 
 ## Funktionen
 
