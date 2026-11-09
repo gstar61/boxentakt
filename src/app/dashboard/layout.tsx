@@ -13,7 +13,7 @@ import { LogoMark } from "@/components/Logo";
 import { TrialBanner } from "./TrialBanner";
 import { FeedbackButton } from "./Feedback";
 
-const KEY = "salonbuch.salon";
+const KEY = "boxentakt.salon";
 const remembered = () => {
   try {
     return localStorage.getItem(KEY);

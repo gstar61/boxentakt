@@ -21,10 +21,10 @@ const read = (): Theme => {
 
 const subscribe = (cb: () => void) => {
   window.addEventListener("storage", cb);
-  window.addEventListener("salonbuch-theme", cb);
+  window.addEventListener("boxentakt-theme", cb);
   return () => {
     window.removeEventListener("storage", cb);
-    window.removeEventListener("salonbuch-theme", cb);
+    window.removeEventListener("boxentakt-theme", cb);
   };
 };
 
@@ -41,7 +41,7 @@ export function ThemeToggle({ className = "icon-btn" }: { className?: string }) 
     } catch {}
     if (t === "system") delete document.documentElement.dataset.theme;
     else document.documentElement.dataset.theme = t;
-    window.dispatchEvent(new Event("salonbuch-theme"));
+    window.dispatchEvent(new Event("boxentakt-theme"));
   };
 
   return (

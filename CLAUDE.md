@@ -15,7 +15,7 @@ Start als Kopie des Codes von **Trimtable** (Friseur-Buchung, Repo `gstar61/Trim
 - `0024` repariert außerdem `busy_intervals`: Termine ohne Anzahlung (leeres `payment_status`) fielen durch `not (null)` aus den belegten Zeiten.
 - Migrationen 0001–0024 sind gegen ein lokales PostgreSQL 16 mit Supabase-Stubs durchgelaufen und per SQL getestet (Buchung mit Fahrzeugklasse, Platzvergabe, Doppelbelegung gesperrt, Verschieben). Gegen ein echtes Supabase-Projekt noch nicht ausgeführt (keins angelegt).
 - Noch nicht gebaut: mehrere Plätze pro Termin (z. B. Hebebühne + Wuchtmaschine), Wartung/Sperrzeiten je Platz, Standorte, Flotten-Sammeltermine, RadsatzPro-Anbindung.
-- Infrastruktur (Supabase, Vercel, Stripe, Resend, DNS) ist noch **nicht** angelegt. Env-Variablen siehe README.
+- Infrastruktur (Supabase, Vercel, Stripe, Resend, DNS) ist noch **nicht** angelegt (Supabase scheiterte am Limit von 2 Gratis-Projekten, braucht Pro). Anleitung: `docs/betrieb.md`, Variablen: `.env.example`. Migration `0025_cron_key.sql` erzeugt den Cron-Schlüssel. Datenbanktests: `supabase/tests/run.sh`.
 
 ## Geplanter Umbau
 1. Ressourcen ausbauen: mehrere Plätze pro Termin, Sperrzeiten/Wartung je Platz.

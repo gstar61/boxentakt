@@ -19,7 +19,7 @@ Next.js 16 (App Router) · React 19 · Tailwind 4 · Supabase (Postgres, Auth, R
 
 Doppelbuchungen verhindert die Datenbank selbst (Exclusion-Constraints auf Mitarbeiter und auf Platz, z. B. Hebebühne, jeweils mit Zeitraum).
 Öffentliche Zugriffe laufen nur über Security-Definer-Funktionen – Kundendaten sind nur für Mitglieder des Betriebs lesbar.
-Migrationen liegen in `supabase/migrations/`.
+Migrationen liegen in `supabase/migrations/`, Einrichtung und Betrieb in [docs/betrieb.md](docs/betrieb.md), Datenbanktests in `supabase/tests/`.
 
 Hinweis: Intern heißen Tabellen und Funktionen noch `salons`, `staff` usw. (Erbe der Vorlage). Sichtbar im Produkt heißt es Betrieb, Mitarbeiter und Platz.
 

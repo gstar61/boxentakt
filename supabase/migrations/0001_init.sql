@@ -1,4 +1,4 @@
--- Salonbuch: Grundschema
+-- Boxentakt: Grundschema
 create extension if not exists btree_gist with schema extensions;
 
 create table public.salons (
