@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { CalendarDays, ChartNoAxesColumn, ExternalLink, LogOut, QrCode, SlidersHorizontal, UsersRound } from "lucide-react";
 import { browserClient } from "@/lib/supabase";
 import type { Holiday, Hours, SpecialDay } from "@/lib/time";
-import { SalonContext, type SalonCtx, type Salon, type Service, type Staff, type StaffPrice } from "./salon-context";
+import { SalonContext, type SalonCtx, type Salon, type Service, type Staff, type StaffPrice, type Resource } from "./salon-context";
 import { Onboarding } from "./Onboarding";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LogoMark } from "@/components/Logo";
@@ -49,7 +49,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       localStorage.setItem(KEY, salon.id);
     } catch {}
     const [from, to] = closureWindow();
-    const [st, sv, h, m, sp, sd, hol] = await Promise.all([
+    const [st, sv, h, m, sp, sd, hol, rs] = await Promise.all([
       sb.from("staff").select("*").eq("salon_id", salon.id).order("sort"),
       sb.from("services").select("*").eq("salon_id", salon.id).order("sort"),
       sb.from("opening_hours").select("weekday,opens,closes").eq("salon_id", salon.id),
@@ -57,6 +57,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       sb.from("staff_prices").select("staff_id,service_id,price_cents").eq("salon_id", salon.id),
       sb.from("special_days").select("day,opens,closes,note").eq("salon_id", salon.id).gte("day", from).order("day"),
       salon.holiday_state ? sb.rpc("public_holidays", { p_state: salon.holiday_state, p_from: from, p_to: to }) : Promise.resolve({ data: [] }),
+      sb.from("resources").select("*").eq("salon_id", salon.id).order("sort"),
     ]);
     const hours = ((h.data ?? []) as { weekday: number; opens: string; closes: string }[]).map((x) => ({
       weekday: x.weekday,
@@ -67,6 +68,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       salon,
       staff: (st.data ?? []) as Staff[],
       services: (sv.data ?? []) as Service[],
+      resources: (rs.data ?? []) as Resource[],
       staffPrices: (sp.data ?? []) as StaffPrice[],
       hours,
       closures: {

@@ -7,7 +7,8 @@ import { atLocal, euro, hm, longDate, zonedDate, zonedMinutes } from "@/lib/time
 import { Drawer, Row, Select, TextField } from "../ui";
 import { notifyCustomer, notifyWaitlistForCancel } from "../actions";
 import { SlotPicker } from "./SlotPicker";
-import { PAYMENT_LABEL, STATUS_LABEL, type Appt, type Status } from "./data";
+import { PAYMENT_LABEL, PLACE_FULL, STATUS_LABEL, pickPlace, type Appt, type Status } from "./data";
+import { useSalon } from "../salon-context";
 
 type Stats = { visits: number; no_shows: number; cancellations: number };
 
@@ -27,6 +28,8 @@ export function AppointmentDrawer(props: {
 }) {
   const a = props.appt;
   const tz = props.tz;
+  const { resources } = useSalon();
+  const place = resources.find((r) => r.id === a.resource_id);
   const hasEmail = Boolean(a.customer?.email);
   const [stats, setStats] = useState<Stats | null>(null);
   const [mail, setMail] = useState(true);
@@ -67,13 +70,26 @@ export function AppointmentDrawer(props: {
     setBusy(true);
     const start = atLocal(move.date, move.min, tz);
     const end = new Date(start.getTime() + durationMin * 60000);
+    // Platz mitnehmen: derselbe, sonst ein anderer freier der gleichen Art
+    let newPlace: string | null | undefined = a.resource_id;
+    if (place) {
+      try {
+        newPlace = await pickPlace(resources, place.kind, start, end, a.id);
+      } catch {
+        newPlace = a.resource_id;
+      }
+      if (newPlace === null) {
+        setBusy(false);
+        return props.onChanged(PLACE_FULL, true);
+      }
+    }
     const { error } = await browserClient()
       .from("appointments")
-      .update({ staff_id: move.staffId, during: `[${start.toISOString()},${end.toISOString()})`, reminder_sent_at: null })
+      .update({ resource_id: newPlace ?? null, staff_id: move.staffId, during: `[${start.toISOString()},${end.toISOString()})`, reminder_sent_at: null })
       .eq("id", a.id);
     if (error) {
       setBusy(false);
-      return props.onChanged(error.code === "23P01" ? "Diese Zeit ist bei der Person schon belegt." : "Verschieben fehlgeschlagen.", true);
+      return props.onChanged(error.code === "23P01" ? (error.message.includes("no_resource_double_booking") ? PLACE_FULL : "Diese Zeit ist bei der Person schon belegt.") : "Verschieben fehlgeschlagen.", true);
     }
     let text = "Termin verschoben";
     if (mail && hasEmail) text = (await notify(a.id, "moved")) ? "Verschoben, Kunde per E-Mail informiert" : "Verschoben (E-Mail nicht gesendet)";
@@ -97,6 +113,7 @@ export function AppointmentDrawer(props: {
       <dl className="grid gap-2.5 rounded-[14px] border border-line bg-card-2 p-4 text-sm">
         <Row k="Termin" v={`${longDate(zonedDate(a.start, tz))}, ${hm(zonedMinutes(a.start, tz))}–${hm(zonedMinutes(a.end, tz))}`} />
         {a.license_plate && <Row k="Kennzeichen" v={a.license_plate} />}
+        {place && <Row k="Platz" v={place.name} />}
         {a.vehicle_info && <Row k="Fahrzeug" v={a.vehicle_info} />}
         {a.vehicle_class !== "pkw" && <Row k="Klasse" v={a.vehicle_class === "suv" ? "SUV / Geländewagen" : "Transporter / Bus"} />}
         <Row k="Leistung" v={a.service_name} />
@@ -117,7 +134,7 @@ export function AppointmentDrawer(props: {
             <TextField id="m-date" label="Datum" type="date" value={move.date} onChange={(v) => v && setMove({ ...move, date: v })} />
             <Select id="m-staff" label="Bei" value={move.staffId} onChange={(v) => setMove({ ...move, staffId: v })} options={props.staff.map((s) => [s.id, s.name])} />
           </div>
-          <SlotPicker id="m-time" salonId={props.salonId} tz={tz} step={props.step} date={move.date} staffId={move.staffId} durationMin={durationMin} ignoreId={a.id} value={move.min} onChange={(min) => setMove({ ...move, min })} />
+          <SlotPicker id="m-time" salonId={props.salonId} tz={tz} step={props.step} date={move.date} staffId={move.staffId} durationMin={durationMin} ignoreId={a.id} resourceKind={place?.kind} value={move.min} onChange={(min) => setMove({ ...move, min })} />
           <div className="flex gap-2">
             <button className="btn btn-primary" disabled={busy || move.min == null} onClick={saveMove}><ArrowRightLeft size={16} /> Verschieben</button>
             <button className="btn btn-ghost" onClick={() => setMoving(false)}>Abbrechen</button>

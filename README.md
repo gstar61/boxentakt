@@ -17,7 +17,7 @@ Domain geplant: boxentakt.de (noch nicht live).
 
 Next.js 16 (App Router) · React 19 · Tailwind 4 · Supabase (Postgres, Auth, RLS, Storage) · Stripe · Resend · Vercel
 
-Doppelbuchungen verhindert die Datenbank selbst (Exclusion-Constraint auf `staff_id` + Zeitraum).
+Doppelbuchungen verhindert die Datenbank selbst (Exclusion-Constraints auf Mitarbeiter und auf Platz, z. B. Hebebühne, jeweils mit Zeitraum).
 Öffentliche Zugriffe laufen nur über Security-Definer-Funktionen – Kundendaten sind nur für Mitglieder des Betriebs lesbar.
 Migrationen liegen in `supabase/migrations/`.
 

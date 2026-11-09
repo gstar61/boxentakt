@@ -4,7 +4,7 @@ import { publicClient } from "@/lib/supabase";
 import { appUrl, sendBookingMails, sendRescheduleMails, type Booked, type Rescheduled } from "@/lib/mail";
 import { pushNewBooking } from "@/lib/push";
 import { stripe, stripeReady, stripeRpc } from "@/lib/stripe";
-import { addDays, freeSlots, fullDateTime, zonedDate, type Busy } from "@/lib/time";
+import { addDays, freeSlots, fullDateTime, zonedDate, type Busy, type ResourceBusy } from "@/lib/time";
 import { loadSalon } from "@/lib/salon";
 import { notifyWaitlist } from "@/lib/waitlist";
 
@@ -181,7 +181,7 @@ export async function joinWaitlistAction(input: { slug: string; serviceId: strin
   return { ok: false as const, message: code ? WAITLIST_MESSAGES[code] : "Eintragen hat nicht geklappt. Bitte erneut versuchen." };
 }
 
-type MovableAppt = { status: string; can_move: boolean; staff_id: string; duration_min: number; salon_slug: string; starts_at: string; ends_at: string };
+type MovableAppt = { status: string; can_move: boolean; staff_id: string; resource_id: string | null; duration_min: number; salon_slug: string; starts_at: string; ends_at: string };
 
 /** Free start times for moving an appointment to another day, same person and duration. */
 export async function rescheduleSlotsAction(token: string, day: string) {
@@ -196,7 +196,12 @@ export async function rescheduleSlotsAction(token: string, day: string) {
   const from = new Date(`${day}T00:00:00Z`);
   from.setUTCHours(from.getUTCHours() - 14);
   const to = new Date(from.getTime() + 52 * 3600_000);
-  const { data: busy } = await publicClient().rpc("busy_intervals", { p_slug: salon.slug, p_from: from.toISOString(), p_to: to.toISOString() });
+  const args = { p_slug: salon.slug, p_from: from.toISOString(), p_to: to.toISOString() };
+  const [{ data: busy }, { data: places }] = await Promise.all([publicClient().rpc("busy_intervals", args), publicClient().rpc("busy_resources", args)]);
+  // Platz: jeder aktive Platz der gleichen Art zählt, der eigene Termin blockiert sich nicht
+  const kind = salon.resources.find((r) => r.id === a.resource_id)?.kind;
+  const placeIds = kind ? salon.resources.filter((r) => r.kind === kind).map((r) => r.id) : [];
+  const ownPlace = (b: ResourceBusy) => b.resource_id === a.resource_id && +new Date(b.starts_at) === +new Date(a.starts_at) && +new Date(b.ends_at) === +new Date(a.ends_at);
   // the appointment itself does not block its own new time
   const own = (b: Busy) => b.staff_id === a.staff_id && +new Date(b.starts_at) === +new Date(a.starts_at) && +new Date(b.ends_at) === +new Date(a.ends_at);
   return freeSlots({
@@ -208,6 +213,7 @@ export async function rescheduleSlotsAction(token: string, day: string) {
     staffIds: [a.staff_id],
     busy: ((busy as Busy[]) ?? []).filter((b) => !own(b)),
     closures: salon,
+    resources: placeIds.length ? { ids: placeIds, busy: ((places as ResourceBusy[]) ?? []).filter((b) => !ownPlace(b)) } : undefined,
   })
     .filter((s) => s.start.getTime() !== new Date(a.starts_at).getTime())
     .map((s) => s.start.toISOString());

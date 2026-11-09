@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import { ArrowLeft, BellPlus, Gift, CalendarCheck2, CalendarPlus, CalendarX2, Check, Clock3, Info, MapPin, Navigation, Phone, Plus } from "lucide-react";
 import { browserClient } from "@/lib/supabase";
-import { addDays, duration, euro, euroFrom, dayHours, dayNote, freeSlots, groupDays, fullDateTime, hm, longDate, shortDay, shortMonth, weekday, zonedDate, type Busy } from "@/lib/time";
+import { addDays, duration, euro, euroFrom, dayHours, dayNote, freeSlots, groupDays, neededKind, type ResourceBusy, fullDateTime, hm, longDate, shortDay, shortMonth, weekday, zonedDate, type Busy } from "@/lib/time";
 import { bookAction, joinWaitlistAction } from "../actions";
 import { Field } from "@/components/Field";
 import { LogoMark } from "@/components/Logo";
@@ -35,7 +35,7 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
   const [staffId, setStaffId] = useState<string>("any");
   const [date, setDate] = useState(() => (initialDay && days.includes(initialDay) ? initialDay : (days.find((d) => dayHours(salon.hours, d, salon).length) ?? today)));
   const [reload, setReload] = useState(0);
-  const [busyState, setBusyState] = useState<{ key: string; list: Busy[] } | null>(null);
+  const [busyState, setBusyState] = useState<{ key: string; list: Busy[]; places: ResourceBusy[] } | null>(null);
   const busyKey = `${date}|${reload}`;
   const busy = busyState?.key === busyKey ? busyState.list : null;
   const [startIso, setStartIso] = useState<string | null>(null);
@@ -55,6 +55,7 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
     ? {
         id: chosen[0].id,
         name: chosen.map((s) => s.name).join(" + "),
+        resource_kind: neededKind(chosen.map((s) => s.resource_kind)),
         // Fahrzeugklasse: Zuschlag in Minuten und Cent einmal je Termin
         duration_min: chosen.reduce((n, s) => n + s.duration_min, 0) + extra.min,
         price_cents: chosen.reduce((n, s) => n + s.price_cents, 0) + extra.cents,
@@ -67,17 +68,18 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
     const from = new Date(`${date}T00:00:00Z`);
     from.setUTCHours(from.getUTCHours() - 14);
     const to = new Date(from.getTime() + 52 * 3600_000);
-    browserClient()
-      .rpc("busy_intervals", { p_slug: salon.slug, p_from: from.toISOString(), p_to: to.toISOString() })
-      .then(({ data }: { data: unknown }) => {
-        if (live) setBusyState({ key: `${date}|${reload}`, list: (data as Busy[]) ?? [] });
-      });
+    const args = { p_slug: salon.slug, p_from: from.toISOString(), p_to: to.toISOString() };
+    Promise.all([browserClient().rpc("busy_intervals", args), browserClient().rpc("busy_resources", args)]).then(([a, b]: { data: unknown }[]) => {
+      if (live) setBusyState({ key: `${date}|${reload}`, list: (a.data as Busy[]) ?? [], places: (b.data as ResourceBusy[]) ?? [] });
+    });
     return () => {
       live = false;
     };
   }, [date, salon.slug, reload]);
 
   const totalMin = service?.duration_min ?? 0;
+  // Platz (z. B. Hebebühne): nur prüfen, wenn der Betrieb solche Plätze angelegt hat
+  const placeIds = service?.resource_kind ? salon.resources.filter((r) => r.kind === service.resource_kind).map((r) => r.id) : [];
   // React Compiler memoizes this; a manual useMemo trips over the derived service object
   const slots = !totalMin || !busy ? [] : freeSlots({
       date,
@@ -88,6 +90,7 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
       staffIds: staffId === "any" ? salon.staff.map((s) => s.id) : [staffId],
       busy,
       closures: salon,
+      resources: placeIds.length ? { ids: placeIds, busy: busyState?.places ?? [] } : undefined,
     });
   const picked = slots.find((s) => s.start.toISOString() === startIso);
   const nextOpen = days.find((d) => d > date && dayHours(salon.hours, d, salon).length > 0);

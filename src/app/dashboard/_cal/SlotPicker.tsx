@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { addDays, atLocal, freeSlots, hm, weekday, type Busy } from "@/lib/time";
-import { busyFor, loadRange } from "./data";
+import { addDays, atLocal, freeSlots, hm, weekday, type Busy, type ResourceBusy } from "@/lib/time";
+import { busyFor, busyPlaces, loadRange } from "./data";
+import { useSalon, type ResourceKind } from "../salon-context";
+
+const NO_PLACES: ResourceBusy[] = [];
 
 /** Free start times (06:00–22:00) for one person on one day, ignoring opening hours on purpose. */
 export function SlotPicker(props: {
@@ -14,28 +17,34 @@ export function SlotPicker(props: {
   staffId: string;
   durationMin: number;
   ignoreId?: string;
+  /** Art des benötigten Platzes (z. B. Hebebühne); leer = keine Platzprüfung */
+  resourceKind?: ResourceKind | null;
   value: number | null;
   onChange: (min: number | null) => void;
 }) {
   const key = `${props.date}|${props.staffId}`;
-  const [busy, setBusy] = useState<{ key: string; list: Busy[] } | null>(null);
+  const { resources } = useSalon();
+  const [busy, setBusy] = useState<{ key: string; list: Busy[]; places: ResourceBusy[] } | null>(null);
 
   useEffect(() => {
     let live = true;
     loadRange(props.salonId, atLocal(props.date, 0, props.tz), atLocal(addDays(props.date, 1), 0, props.tz))
-      .then(({ appts, absences }) => live && setBusy({ key, list: busyFor(appts, absences, [props.staffId], props.ignoreId) }))
-      .catch(() => live && setBusy({ key, list: [] }));
+      .then(({ appts, absences }) => live && setBusy({ key, list: busyFor(appts, absences, [props.staffId], props.ignoreId), places: busyPlaces(appts, props.ignoreId) }))
+      .catch(() => live && setBusy({ key, list: [], places: [] }));
     return () => {
       live = false;
     };
   }, [key, props.salonId, props.date, props.tz, props.staffId, props.ignoreId]);
 
   const list = busy?.key === key ? busy.list : null;
+  const placeIds = props.resourceKind ? resources.filter((r) => r.active && r.kind === props.resourceKind).map((r) => r.id) : [];
+  const placeKey = placeIds.join(",");
+  const placesBusy = busy?.key === key ? busy.places : NO_PLACES;
   const options = useMemo(() => {
     if (!list) return [];
     const allDay = [{ weekday: weekday(props.date), opens: "06:00", closes: "22:00" }];
-    return freeSlots({ date: props.date, tz: props.tz, hours: allDay, step: props.step, durationMin: props.durationMin, staffIds: [props.staffId], busy: list, now: new Date(0) });
-  }, [list, props.date, props.tz, props.step, props.durationMin, props.staffId]);
+    return freeSlots({ date: props.date, tz: props.tz, hours: allDay, step: props.step, durationMin: props.durationMin, staffIds: [props.staffId], busy: list, now: new Date(0), resources: placeKey ? { ids: placeKey.split(","), busy: placesBusy } : undefined });
+  }, [list, placesBusy, placeKey, props.date, props.tz, props.step, props.durationMin, props.staffId]);
 
   // keep the selection valid when date, person or service changes
   const valid = props.value != null && options.some((o) => o.min === props.value);

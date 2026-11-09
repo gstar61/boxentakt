@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
-import { Ban, CalendarOff, ChevronLeft, ChevronRight, Moon, Plus } from "lucide-react";
+import { Ban, CalendarOff, ChevronLeft, ChevronRight, Moon, Plus, Warehouse } from "lucide-react";
 import { addDays, atLocal, dayMonth, euro, hm, dayHours, dayNote, longDate, shortDay, toMin, weekStart, zonedDate, zonedMinutes } from "@/lib/time";
 import { useSalon } from "./salon-context";
 import { Legend, Stat } from "./ui";
@@ -22,7 +22,7 @@ const subscribePhone = (cb: () => void) => {
 };
 
 export default function CalendarPage() {
-  const { salon, staff, services, hours, closures } = useSalon();
+  const { salon, staff, services, hours, closures, resources } = useSalon();
   const tz = salon.timezone;
   const [view, setView] = useState<View>("day");
   const [date, setDate] = useState(() => zonedDate(new Date(), tz));
@@ -69,8 +69,14 @@ export default function CalendarPage() {
   // phones show one person per day by default (columns would be too narrow), "Alle" brings back all
   const phone = useSyncExternalStore(subscribePhone, () => window.matchMedia(PHONE).matches, () => false);
   const [focus, setFocus] = useState<string | null>(null);
+  // Tagesansicht nach Mitarbeitern oder nach Plätzen (Hebebühne …)
+  const [lanes, setLanes] = useState<"staff" | "places">("staff");
+  const placeCols = resources.filter((r) => r.active || active.some((a) => a.resource_id === r.id));
+  const byPlace = lanes === "places" && view === "day" && placeCols.length > 0;
+  const laneOf = (a: Appt) => (byPlace ? a.resource_id : a.staff_id);
+  const withoutPlace = byPlace ? active.filter((a) => !a.resource_id).length : 0;
   const focused = focus === "all" ? null : columns.find((c) => c.id === focus) ?? columns[0];
-  const dayColumns = phone && view === "day" && focused && columns.length > 1 ? [focused] : columns;
+  const dayColumns: { id: string; name: string }[] = byPlace ? placeCols : phone && view === "day" && focused && columns.length > 1 ? [focused] : columns;
   const revenue = active.filter((a) => a.status !== "nicht_erschienen").reduce((n, a) => n + a.price_cents, 0);
   const noShows = active.filter((a) => a.status === "nicht_erschienen").length;
   const today = zonedDate(now, tz);
@@ -158,7 +164,17 @@ export default function CalendarPage() {
         <p className="empty card !border-solid"><Moon size={18} /> {view === "day" ? "An diesem Tag ist geschlossen." : "In dieser Woche ist geschlossen."} Öffnungszeiten lassen sich unter „Leistungen“ ändern.</p>
       ) : view === "day" ? (
         <div className="grid gap-3">
-        {phone && columns.length > 1 && (
+        {view === "day" && placeCols.length > 0 && (
+          <div className="flex w-fit rounded-xl border border-line bg-card p-1" role="tablist" aria-label="Spalten">
+            {([["staff", "Mitarbeiter"], ["places", "Plätze"]] as const).map(([v, label]) => (
+              <button key={v} role="tab" aria-selected={lanes === v} onClick={() => setLanes(v)}
+                className="flex items-center gap-1.5 rounded-[9px] px-3 py-1.5 text-sm font-medium text-muted aria-selected:bg-fg/8 aria-selected:text-fg">
+                {v === "places" && <Warehouse size={14} />}{label}
+              </button>
+            ))}
+          </div>
+        )}
+        {phone && !byPlace && columns.length > 1 && (
           <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4" role="group" aria-label="Person">
             {[...columns, { id: "all", name: "Alle" }].map((c) => (
               <button key={c.id} className="pill shrink-0 !h-9" aria-pressed={c.id === "all" ? focus === "all" : focused?.id === c.id} onClick={() => setFocus(c.id)}>
@@ -175,7 +191,7 @@ export default function CalendarPage() {
               <div key={s.id} className={`flex items-center gap-2.5 border-b border-line px-3 py-3.5 font-medium ${i ? "border-l" : ""}`}>
                 <span className="grid size-6.5 place-items-center rounded-lg bg-fg/7 text-xs font-semibold text-muted">{s.name.slice(0, 1).toUpperCase()}</span>
                 {s.name}
-                <span className="ml-auto font-mono text-xs text-muted">{active.filter((a) => a.staff_id === s.id).length}</span>
+                <span className="ml-auto font-mono text-xs text-muted">{active.filter((a) => laneOf(a) === s.id).length}</span>
               </div>
             ))}
             {timeAxis}
@@ -185,16 +201,17 @@ export default function CalendarPage() {
                 className={i ? "border-l border-line" : ""}
                 date={date} tz={tz} range={range} px={px} step={salon.slot_step}
                 intervals={dayHours(hours, date, closures)}
-                appts={active.filter((a) => a.staff_id === s.id)}
-                absences={absencesFor(date, s.id)}
+                appts={active.filter((a) => laneOf(a) === s.id)}
+                absences={byPlace ? [] : absencesFor(date, s.id)}
                 nowMin={date === today ? nowMin : null}
-                onEmpty={(min) => setOpen({ kind: "create", date, staffId: s.id, min })}
+                onEmpty={(min) => setOpen({ kind: "create", date, staffId: byPlace ? columns[0]?.id ?? "" : s.id, min })}
                 onOpenAppt={(id) => setOpen({ kind: "appt", id })}
                 onOpenAbsence={(id) => setOpen({ kind: "absence", id })}
               />
             ))}
           </div>
         </div>
+        {withoutPlace > 0 && <p className="text-xs text-muted">{withoutPlace} {withoutPlace === 1 ? "Termin braucht" : "Termine brauchen"} keinen Platz und {withoutPlace === 1 ? "steht" : "stehen"} nur in der Mitarbeiter-Ansicht.</p>}
         </div>
       ) : (
         <div className="card overflow-x-auto">

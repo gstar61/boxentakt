@@ -6,8 +6,8 @@ import { browserClient } from "@/lib/supabase";
 import { atLocal, duration, euro } from "@/lib/time";
 import { Drawer, Select, TextField } from "../ui";
 import { SlotPicker } from "./SlotPicker";
-import { normPhone } from "./data";
-import { priceWith, useSalon } from "../salon-context";
+import { PLACE_FULL, normPhone, pickPlace } from "./data";
+import { priceWith, useSalon, type ResourceKind } from "../salon-context";
 
 type Found = { id: string; name: string; phone: string | null };
 
@@ -16,7 +16,7 @@ export function CreateDialog(props: {
   tz: string;
   step: number;
   initial: { date: string; staffId: string; min: number | null };
-  services: { id: string; name: string; duration_min: number; price_cents: number }[];
+  services: { id: string; name: string; duration_min: number; price_cents: number; resource_kind?: ResourceKind | null }[];
   staff: { id: string; name: string }[];
   onClose: () => void;
   onCreated: () => void;
@@ -34,7 +34,7 @@ export function CreateDialog(props: {
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const service = props.services.find((s) => s.id === serviceId);
-  const { staffPrices } = useSalon();
+  const { staffPrices, resources } = useSalon();
 
   // typeahead over existing customers
   useEffect(() => {
@@ -78,7 +78,19 @@ export function CreateDialog(props: {
     }
     const start = atLocal(date, min, props.tz);
     const end = new Date(start.getTime() + service.duration_min * 60000);
+    let place: string | null | undefined;
+    try {
+      place = await pickPlace(resources, service.resource_kind, start, end);
+    } catch {
+      place = undefined;
+    }
+    if (place === null) {
+      if (created) await sb.from("customers").delete().eq("id", customerId);
+      setBusy(false);
+      return setErr(PLACE_FULL);
+    }
     const { error } = await sb.from("appointments").insert({
+      resource_id: place ?? null,
       salon_id: props.salonId,
       staff_id: staffId,
       service_id: service.id,
@@ -93,7 +105,7 @@ export function CreateDialog(props: {
     setBusy(false);
     if (error) {
       if (created) await sb.from("customers").delete().eq("id", customerId);
-      return setErr(error.code === "23P01" ? "Diese Zeit ist bei der Person schon belegt." : "Termin konnte nicht gespeichert werden.");
+      return setErr(error.code === "23P01" ? (error.message.includes("no_resource_double_booking") ? PLACE_FULL : "Diese Zeit ist bei der Person schon belegt.") : "Termin konnte nicht gespeichert werden.");
     }
     props.onCreated();
   }
@@ -136,7 +148,7 @@ export function CreateDialog(props: {
           <Select id="c-staff" label="Bei" value={staffId} onChange={setStaffId} options={props.staff.map((s) => [s.id, s.name])} />
         </div>
         {service && (
-          <SlotPicker id="c-time" salonId={props.salonId} tz={props.tz} step={props.step} date={date} staffId={staffId} durationMin={service.duration_min} value={min} onChange={setMin} />
+          <SlotPicker id="c-time" salonId={props.salonId} tz={props.tz} step={props.step} date={date} staffId={staffId} durationMin={service.duration_min} resourceKind={service.resource_kind} value={min} onChange={setMin} />
         )}
         <TextField id="c-plate" label="Kennzeichen (optional)" value={plate} onChange={setPlate} />
         <TextField id="c-note" label="Hinweis (optional)" value={note} onChange={setNote} />

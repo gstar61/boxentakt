@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { BellRing, Clock3, Coffee, CreditCard, Plus, Save, Scale, Scissors, Store, Trash2, X } from "lucide-react";
+import { BellRing, Clock3, Coffee, CreditCard, Plus, Save, Scale, Store, Wrench, Trash2, X } from "lucide-react";
 import { browserClient } from "@/lib/supabase";
 import { duration, hm, toMin } from "@/lib/time";
-import { useSalon } from "../salon-context";
+import { useSalon, RESOURCE_KIND_LABEL, type ResourceKind } from "../salon-context";
 import { TeamSection } from "./TeamSection";
 import { BillingSection } from "./BillingSection";
 import { BookingLink } from "./BookingLink";
@@ -13,6 +13,7 @@ import { FollowupSection } from "./FollowupSection";
 import { PushSection } from "./PushSection";
 import { StaffPriceSection } from "./StaffPriceSection";
 import { VehicleClassSection } from "./VehicleClassSection";
+import { ResourceSection } from "./ResourceSection";
 import { ClosuresSection } from "./ClosuresSection";
 import { DataSection } from "./DataSection";
 
@@ -21,7 +22,7 @@ const DAYS = [
 ] as const;
 const TABS = [
   { id: "salon", label: "Betrieb", icon: Store },
-  { id: "leistungen", label: "Leistungen & Preise", icon: Scissors },
+  { id: "leistungen", label: "Leistungen & Preise", icon: Wrench },
   { id: "team", label: "Team & Zeiten", icon: Clock3 },
   { id: "nachrichten", label: "Benachrichtigungen", icon: BellRing },
   { id: "abo", label: "Abo & Zahlungen", icon: CreditCard },
@@ -49,7 +50,7 @@ type Draft = {
   contact_email: string;
   vat_id: string;
   legal_extra: string;
-  services: { id: string; name: string; duration_min: number; price: string }[];
+  services: { id: string; name: string; duration_min: number; price: string; resource_kind: ResourceKind | "" }[];
   staff: { id: string; name: string }[];
   hours: Record<number, DayHours | null>;
 };
@@ -66,7 +67,7 @@ export default function SettingsPage() {
     contact_email: ctx.salon.contact_email ?? "",
     vat_id: ctx.salon.vat_id ?? "",
     legal_extra: ctx.salon.legal_extra ?? "",
-    services: ctx.services.filter((s) => s.active).map((s) => ({ id: s.id, name: s.name, duration_min: s.duration_min, price: (s.price_cents / 100).toString().replace(".", ",") })),
+    services: ctx.services.filter((s) => s.active).map((s) => ({ id: s.id, name: s.name, duration_min: s.duration_min, price: (s.price_cents / 100).toString().replace(".", ","), resource_kind: s.resource_kind ?? "" })),
     staff: ctx.staff.filter((s) => s.active).map((s) => ({ id: s.id, name: s.name })),
     hours: Object.fromEntries(DAYS.map(([d]) => {
       const iv = ctx.hours.filter((x) => x.weekday === d).sort((a, b) => toMin(a.opens) - toMin(b.opens));
@@ -101,7 +102,7 @@ export default function SettingsPage() {
     const keepStaff = new Set(d.staff.map((s) => s.id));
     const results = await Promise.all([
       sb.from("salons").update({ name: d.name.trim(), address: d.address.trim() || null, phone: d.phone.trim() || null, notice: d.notice.trim() || null, legal_name: d.legal_name.trim() || null, contact_email: d.contact_email.trim() || null, vat_id: d.vat_id.trim() || null, legal_extra: d.legal_extra.trim() || null }).eq("id", sid),
-      sb.from("services").upsert(d.services.map((s, i) => ({ id: s.id, salon_id: sid, name: s.name.trim(), duration_min: s.duration_min, price_cents: cents[i], active: true, sort: i }))),
+      sb.from("services").upsert(d.services.map((s, i) => ({ id: s.id, salon_id: sid, name: s.name.trim(), duration_min: s.duration_min, price_cents: cents[i], active: true, sort: i, resource_kind: s.resource_kind || null }))),
       ...ctx.services.filter((s) => s.active && !keepSvc.has(s.id)).map((s) => sb.from("services").update({ active: false }).eq("id", s.id)),
       sb.from("staff").upsert(d.staff.map((s, i) => ({ id: s.id, salon_id: sid, name: s.name.trim(), active: true, sort: i }))),
       ...ctx.staff.filter((s) => s.active && !keepStaff.has(s.id)).map((s) => sb.from("staff").update({ active: false }).eq("id", s.id)),
@@ -176,19 +177,23 @@ export default function SettingsPage() {
               <section className="card grid gap-4 p-5 sm:p-6">
                 <div className="flex items-center justify-between gap-3">
                   <h2 className="text-[15px] font-semibold">Leistungen</h2>
-                  <button className="btn btn-sm" onClick={() => upd({ services: [...d.services, { id: crypto.randomUUID(), name: "", duration_min: 30, price: "0" }] })}><Plus size={16} /> Leistung</button>
+                  <button className="btn btn-sm" onClick={() => upd({ services: [...d.services, { id: crypto.randomUUID(), name: "", duration_min: 30, price: "0", resource_kind: "" }] })}><Plus size={16} /> Leistung</button>
                 </div>
                 <div className="grid gap-2">
-                  <div className="hidden grid-cols-[minmax(0,1fr)_140px_120px_40px] gap-2 text-xs text-muted sm:grid">
-                    <span>Bezeichnung</span><span>Dauer</span><span>Preis</span><span />
+                  <div className="hidden grid-cols-[minmax(0,1fr)_140px_120px_150px_40px] gap-2 text-xs text-muted sm:grid">
+                    <span>Bezeichnung</span><span>Dauer</span><span>Preis</span><span>Braucht Platz</span><span />
                   </div>
                   {d.services.map((s, i) => (
-                    <div key={s.id} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_40px] items-center gap-2 border-b border-line pb-3 last:border-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_140px_120px_40px] sm:border-0 sm:pb-0">
+                    <div key={s.id} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_40px] items-center gap-2 border-b border-line pb-3 last:border-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_140px_120px_150px_40px] sm:border-0 sm:pb-0">
                       <input aria-label="Bezeichnung" className="input input-sm col-span-3 sm:col-span-1" value={s.name} placeholder="z. B. Ölwechsel" onChange={(e) => upd({ services: d.services.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })} />
                       <select aria-label="Dauer" className="input input-sm" value={s.duration_min} onChange={(e) => upd({ services: d.services.map((x, j) => (j === i ? { ...x, duration_min: Number(e.target.value) } : x)) })}>
                         {DUR.map((m) => <option key={m} value={m}>{duration(m)}</option>)}
                       </select>
                       <div className="relative"><input aria-label="Preis in Euro" inputMode="decimal" className="input input-sm w-full pr-7 tabular-nums" value={s.price} onChange={(e) => upd({ services: d.services.map((x, j) => (j === i ? { ...x, price: e.target.value } : x)) })} /><span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-muted">€</span></div>
+                      <select aria-label="Braucht Platz" className="input input-sm col-span-2 sm:col-span-1" value={s.resource_kind} onChange={(e) => upd({ services: d.services.map((x, j) => (j === i ? { ...x, resource_kind: e.target.value as ResourceKind | "" } : x)) })}>
+                        <option value="">kein Platz</option>
+                        {(Object.keys(RESOURCE_KIND_LABEL) as ResourceKind[]).map((k) => <option key={k} value={k}>{RESOURCE_KIND_LABEL[k]}</option>)}
+                      </select>
                       <button className="icon-btn" aria-label="Leistung entfernen" onClick={() => upd({ services: d.services.filter((_, j) => j !== i) })}><Trash2 size={16} /></button>
                     </div>
                   ))}
@@ -201,6 +206,7 @@ export default function SettingsPage() {
           )}
           {tab === "team" && (
             <>
+              <ResourceSection />
               <div className="grid items-start gap-6 xl:grid-cols-2">
                 <section className="card grid content-start gap-4 p-5 sm:p-6">
                   <div className="flex items-center justify-between gap-3">

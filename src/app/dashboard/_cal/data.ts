@@ -1,5 +1,6 @@
 import { browserClient } from "@/lib/supabase";
-import { parseRange, type Busy } from "@/lib/time";
+import { parseRange, type Busy, type ResourceBusy } from "@/lib/time";
+import type { Resource, ResourceKind } from "../salon-context";
 
 export type Status = "gebucht" | "erschienen" | "nicht_erschienen" | "storniert";
 export type Appt = {
@@ -14,6 +15,7 @@ export type Appt = {
   status: Status;
   source: "online" | "salon";
   note: string | null;
+  resource_id: string | null;
   license_plate: string | null;
   vehicle_class: "pkw" | "suv" | "transporter";
   vehicle_info: string | null;
@@ -40,7 +42,7 @@ export async function loadRange(salonId: string, from: Date, to: Date) {
   const [a, b] = await Promise.all([
     sb
       .from("appointments")
-      .select("id,staff_id,customer_id,service_id,service_name,price_cents,during,status,source,note,license_plate,vehicle_class,vehicle_info,deposit_cents,payment_status,payment_expires_at,customers(name,phone,email,note)")
+      .select("id,staff_id,customer_id,service_id,service_name,price_cents,during,status,source,note,resource_id,license_plate,vehicle_class,vehicle_info,deposit_cents,payment_status,payment_expires_at,customers(name,phone,email,note)")
       .eq("salon_id", salonId)
       .filter("during", "ov", range(from, to)),
     sb.from("absences").select("id,staff_id,during,reason").eq("salon_id", salonId).filter("during", "ov", range(from, to)),
@@ -74,3 +76,30 @@ export function busyFor(appts: Appt[], absences: Absence[], staffIds: string[], 
 
 /** Same normalisation as customers.phone_norm in the database. */
 export const normPhone = (s: string) => s.replace(/\D/g, "").replace(/^(00)?49/, "0");
+
+/** Belegte Zeiten der Plätze (aktive Termine mit Platz), optional ohne einen Termin. */
+export function busyPlaces(appts: Appt[], ignoreId?: string): ResourceBusy[] {
+  return appts
+    .filter((a) => a.status !== "storniert" && a.id !== ignoreId && a.resource_id)
+    .map((a) => ({ resource_id: a.resource_id as string, starts_at: a.start.toISOString(), ends_at: a.end.toISOString() }));
+}
+
+/**
+ * Freien Platz der gewünschten Art für [start, end) finden.
+ * `undefined` = keine Platzprüfung (Leistung braucht keinen oder der Betrieb hat keinen Platz dieser Art), `null` = alle belegt.
+ */
+export async function pickPlace(resources: Resource[], kind: ResourceKind | null | undefined, start: Date, end: Date, ignoreId?: string): Promise<string | null | undefined> {
+  const ids = kind ? resources.filter((r) => r.active && r.kind === kind).sort((a, b) => a.sort - b.sort).map((r) => r.id) : [];
+  if (!ids.length) return undefined;
+  const { data, error } = await browserClient()
+    .from("appointments")
+    .select("id,resource_id")
+    .in("resource_id", ids)
+    .neq("status", "storniert")
+    .filter("during", "ov", range(start, end));
+  if (error) throw error;
+  const taken = new Set((data ?? []).filter((r: { id: string }) => r.id !== ignoreId).map((r: { resource_id: string }) => r.resource_id));
+  return ids.find((id) => !taken.has(id)) ?? null;
+}
+
+export const PLACE_FULL = "Alle Plätze dieser Art sind zu dieser Zeit belegt.";

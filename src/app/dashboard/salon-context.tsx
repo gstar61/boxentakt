@@ -28,7 +28,10 @@ export type Salon = {
   class_extra: Record<"pkw" | "suv" | "transporter", { min: number; cents: number }>;
 };
 export type Staff = { id: string; name: string; active: boolean; sort: number };
-export type Service = { id: string; name: string; duration_min: number; price_cents: number; active: boolean; sort: number; rebook_weeks: number | null };
+export type ResourceKind = "buehne" | "wuchtmaschine" | "sonstige";
+export const RESOURCE_KIND_LABEL: Record<ResourceKind, string> = { buehne: "Hebebühne", wuchtmaschine: "Wuchtmaschine", sonstige: "Sonstiger Platz" };
+export type Resource = { id: string; name: string; kind: ResourceKind; active: boolean; sort: number };
+export type Service = { id: string; name: string; duration_min: number; price_cents: number; active: boolean; sort: number; rebook_weeks: number | null; resource_kind: ResourceKind | null };
 
 export type StaffPrice = { staff_id: string; service_id: string; price_cents: number };
 
@@ -40,6 +43,7 @@ export type SalonCtx = {
   salon: Salon;
   staff: Staff[];
   services: Service[];
+  resources: Resource[];
   staffPrices: StaffPrice[];
   hours: Hours[];
   /** public holidays and special days (closed / other hours) around today */

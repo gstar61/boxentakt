@@ -11,12 +11,14 @@ Start als Kopie des Codes von **Trimtable** (Friseur-Buchung, Repo `gstar61/Trim
 - Marke, Domain-Texte und Slogan sind auf Boxentakt umbenannt; sichtbare Texte, Startwerte, Landingpage, SEO, 404-Seite (rollendes Rad) sind auf Werkstatt umgestellt.
 - **Fahrzeug** (Migration `0023_vehicles.sql`): `appointments.license_plate` (Pflicht online), `vehicle_class` (pkw/suv/transporter), `vehicle_info`; `salons.class_extra` = Zuschlag je Klasse in Minuten und Cent, verwaltet unter Einstellungen → Leistungen (`VehicleClassSection`). `book_services` hat dafür drei neue Parameter (`p_plate`, `p_class`, `p_vehicle`), der alte 8-Parameter-Aufruf und `book_appointment` entfallen.
 - Interne Namen (Tabellen `salons`, `staff`, RPCs `*_salon*`, Variablen `salon`) bleiben vorerst, damit Migrationen und Funktionen nicht brechen. Sichtbar heißt es Betrieb/Mitarbeiter.
-- Noch nicht gebaut: Termin belegt mehrere Ressourcen gleichzeitig (Mechaniker + Hebebühne), Standorte, Flotten-Sammeltermine, RadsatzPro-Anbindung. Ressourcen (z. B. „Hebebühne 1“) lassen sich bis dahin als eigene Zeile unter Team anlegen.
-- Migration 0023 ist noch nicht auf einer Datenbank ausgeführt (kein Supabase-Projekt angelegt).
+- **Plätze / Ressourcenplanung** (Migration `0024_resources.sql`): Tabelle `resources` (Hebebühne, Wuchtmaschine, sonstige), `services.resource_kind` („Braucht Platz“), `appointments.resource_id` mit Exclusion-Constraint `no_resource_double_booking`. Ein Termin belegt höchstens **einen** Platz; die Art folgt der Priorität Hebebühne > Wuchtmaschine > sonstige unter den gebuchten Leistungen. Hat ein Betrieb keinen aktiven Platz der Art, wird nichts geprüft. `book_services` und `reschedule_by_token` suchen einen freien Platz (beim Verschieben derselbe, sonst ein anderer der Art), `busy_resources(slug, von, bis)` liefert die Belegung für die Buchungsseite (`freeSlots(..., resources)` in `src/lib/time.ts`). Verwaltung: Einstellungen → Team & Zeiten (`ResourceSection`) und je Leistung „Braucht Platz“; Kalender-Tagesansicht hat den Schalter Mitarbeiter/Plätze; Termin eintragen und Verschieben im Dashboard vergeben den Platz über `pickPlace` (`_cal/data.ts`).
+- `0024` repariert außerdem `busy_intervals`: Termine ohne Anzahlung (leeres `payment_status`) fielen durch `not (null)` aus den belegten Zeiten.
+- Migrationen 0001–0024 sind gegen ein lokales PostgreSQL 16 mit Supabase-Stubs durchgelaufen und per SQL getestet (Buchung mit Fahrzeugklasse, Platzvergabe, Doppelbelegung gesperrt, Verschieben). Gegen ein echtes Supabase-Projekt noch nicht ausgeführt (keins angelegt).
+- Noch nicht gebaut: mehrere Plätze pro Termin (z. B. Hebebühne + Wuchtmaschine), Wartung/Sperrzeiten je Platz, Standorte, Flotten-Sammeltermine, RadsatzPro-Anbindung.
 - Infrastruktur (Supabase, Vercel, Stripe, Resend, DNS) ist noch **nicht** angelegt. Env-Variablen siehe README.
 
 ## Geplanter Umbau
-1. Ressourcen: Termin kann mehrere Ressourcen belegen (Mechaniker, Hebebühne, Wuchtmaschine), Doppelbuchungs-Schutz je Ressource.
+1. Ressourcen ausbauen: mehrere Plätze pro Termin, Sperrzeiten/Wartung je Platz.
 2. Optional Reifengröße im Termin; Fahrzeugdaten in der Kundenkartei.
 3. Weitere Leistungen im Startkatalog (Batterie, Klima, Reifenreparatur).
 4. Standorte und Flotten-Sammeltermine.
