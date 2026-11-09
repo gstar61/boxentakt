@@ -16,7 +16,7 @@ export default function NotFound() {
         </div>
         <Link href="/" className="btn btn-primary">Zur Startseite</Link>
         <p className="text-sm text-muted">
-          Auf einen kaputten Link gestoßen? <ReportLink subject="Kaputter Link auf trimtable.de">Melde es uns.</ReportLink>
+          Auf einen kaputten Link gestoßen? <ReportLink subject="Kaputter Link auf boxentakt.de">Melde es uns.</ReportLink>
         </p>
         <div className="mt-2 w-full border-t border-line pt-6"><SnipScene /></div>
       </main>

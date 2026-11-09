@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 
 const fmt = (n: number) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: 0 }).format(n);
 
-/** What a commission marketplace would take per year compared with Trimtable's flat price. */
+/** What a commission marketplace would take per year compared with Boxentakt's flat price. */
 export function SavingsCalculator() {
   const [clients, setClients] = useState(15);
   const [ticket, setTicket] = useState(55);
@@ -28,10 +28,10 @@ export function SavingsCalculator() {
       </div>
       <div className="grid gap-3 border-t border-line pt-6 sm:grid-cols-3">
         <Figure label="Provision pro Jahr" value={`${fmt(commission)} €`} muted />
-        <Figure label="Trimtable pro Jahr" value={`${fmt(ours)} €`} muted />
+        <Figure label="Boxentakt pro Jahr" value={`${fmt(ours)} €`} muted />
         <Figure label="Bleibt bei Ihnen" value={`${fmt(saved)} €`} />
       </div>
-      <p className="text-xs text-dim">Ohne Grundgebühr der Plattform gerechnet. Trimtable mit Jahresabo, keine Umsatzsteuer.</p>
+      <p className="text-xs text-dim">Ohne Grundgebühr der Plattform gerechnet. Boxentakt mit Jahresabo, keine Umsatzsteuer.</p>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { publicClient } from "./supabase";
 import { OPERATOR } from "./operator";
 
 /**
- * Sending: Resend with the verified domain trimtable.de when RESEND_API_KEY is set (SPF/DKIM, far less spam),
+ * Sending: Resend with the verified domain boxentakt.de when RESEND_API_KEY is set (SPF/DKIM, far less spam),
  * otherwise Gmail via app password (SMTP_USER/SMTP_PASS). Without either, mails are skipped.
  */
 const resendKey = process.env.RESEND_API_KEY;
@@ -49,7 +49,7 @@ async function send(to: string, subject: string, mail: Mail, fromName: string, r
       method: "POST",
       headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: `"${name}" <${process.env.MAIL_FROM || "termine@trimtable.de"}>`,
+        from: `"${name}" <${process.env.MAIL_FROM || "termine@boxentakt.de"}>`,
         to: [to],
         subject,
         html: mail.html,
@@ -137,7 +137,7 @@ export async function sendBookingMails(b: Booked, customer: { name: string; emai
         ],
         button: { label: "Im Kalender ansehen", url: `${appUrl()}/dashboard` },
       }),
-      "Trimtable",
+      "Boxentakt",
     ),
   );
   const res = await Promise.allSettled(jobs);
@@ -231,7 +231,7 @@ export async function sendInvite(to: string, salonName: string, invitedBy: strin
       button: { label: "Konto anlegen", url: `${appUrl()}/login` },
       body: "Lege das Konto mit genau dieser E-Mail-Adresse an („Noch kein Konto?“). Nach der Bestätigung siehst du den Kalender des Salons.",
     }),
-    "Trimtable",
+    "Boxentakt",
     invitedBy,
   );
 }
@@ -335,7 +335,7 @@ export async function sendFeedback(f: { to: string; kind: keyof typeof FEEDBACK_
       rows: [["Von", f.from], ["Salon", f.salon ?? "–"], ["Seite", f.page ?? "–"]],
       body: `<div style="white-space:pre-wrap">${esc(f.message)}</div>`,
     }),
-    "Trimtable Feedback",
+    "Boxentakt Feedback",
     f.from,
   );
 }
@@ -396,7 +396,7 @@ export async function sendVoucherMails(v: VoucherPaid) {
         button: { label: "Gutscheine ansehen", url: `${appUrl()}/dashboard/kassieren` },
         body: "Das Geld geht wie bei Anzahlungen direkt auf dein Stripe-Konto.",
       }),
-      "Trimtable",
+      "Boxentakt",
     ),
   ]);
   res.forEach((r) => r.status === "rejected" && console.error("voucher mail failed", r.reason));
@@ -419,7 +419,7 @@ export async function sendDeletionNotice(d: DeletionNotice) {
             title: "Dein Salon wurde gelöscht",
             intro: `Wie angekündigt haben wir ${esc(d.salon_name)} mit allen Terminen, Kunden, Einstellungen und Logins gelöscht. Rechnungen bleiben wegen der gesetzlichen Aufbewahrungspflicht bei Stripe gespeichert.`,
             button: { label: "Neu starten", url: `${appUrl()}/registrieren` },
-            body: "Danke, dass du Trimtable ausprobiert hast. Wenn du uns sagen magst, was gefehlt hat, antworte einfach auf diese Mail.",
+            body: "Danke, dass du Boxentakt ausprobiert hast. Wenn du uns sagen magst, was gefehlt hat, antworte einfach auf diese Mail.",
           },
         }
       : {
@@ -442,7 +442,7 @@ export async function sendDeletionNotice(d: DeletionNotice) {
           },
         };
   const html = mailLayout({ brand: platform, preheader: mail.parts.title, ...mail.parts });
-  await Promise.all(d.to.map((to) => send(to, mail.subject, html, "Trimtable", OPERATOR.email)));
+  await Promise.all(d.to.map((to) => send(to, mail.subject, html, "Boxentakt", OPERATOR.email)));
 }
 
 /** Monthly report to the operator: rows grouped into sections, values with the previous month in brackets. */
@@ -457,7 +457,7 @@ export async function sendReport(r: { to: string; month: string; sections: { tit
   const body = r.sections.map((s) => `<div style="margin:20px 0 0;font-weight:600;color:#0B1220">${esc(s.title)}</div>${table(s.rows)}`).join("");
   return send(
     r.to,
-    `Trimtable – Monatsbericht ${r.month}`,
+    `Boxentakt – Monatsbericht ${r.month}`,
     mailLayout({
       brand: platform,
       preheader: r.sections[0]?.rows.map(([k, v]) => `${k} ${v}`).join(" · "),
@@ -466,7 +466,7 @@ export async function sendReport(r: { to: string; month: string; sections: { tit
       body,
       note: r.note,
     }),
-    "Trimtable",
+    "Boxentakt",
   );
 }
 
@@ -508,7 +508,7 @@ export async function sendRescheduleMails(r: Rescheduled) {
         ],
         button: { label: "Im Kalender ansehen", url: `${appUrl()}/dashboard` },
       }),
-      "Trimtable",
+      "Boxentakt",
     ),
   ];
   if (r.customer_email) {

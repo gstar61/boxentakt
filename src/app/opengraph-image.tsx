@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { SLOGAN } from "@/lib/brand";
 
-export const alt = "Trimtable – Online-Termine für Friseursalons";
+export const alt = "Boxentakt – Online-Termine für Friseursalons";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -36,7 +36,7 @@ export default async function OpenGraphImage() {
                 <rect x="41" y="41" width="10" height="10" rx="3" fill="#14d39a" />
               </svg>
             </div>
-            Trimtable
+            Boxentakt
             <span style={{ fontSize: 24, fontWeight: 400, color: "#94a3b8", marginLeft: 6 }}>{SLOGAN}</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 84, fontWeight: 600, lineHeight: 1.02, letterSpacing: -3 }}>

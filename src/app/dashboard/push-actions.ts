@@ -32,7 +32,7 @@ export async function testPush(accessToken: string, endpoint: string) {
   const sb = userClient(String(accessToken));
   const { data } = await sb.from("push_subscriptions").select("endpoint,p256dh,auth").eq("endpoint", String(endpoint)).maybeSingle();
   if (!data) return { ok: false };
-  const gone = await sendPush([data], { title: "Trimtable", body: "So sieht eine Benachrichtigung für neue Buchungen aus.", url: "/dashboard", tag: "test" });
+  const gone = await sendPush([data], { title: "Boxentakt", body: "So sieht eine Benachrichtigung für neue Buchungen aus.", url: "/dashboard", tag: "test" });
   if (gone.length) await sb.from("push_subscriptions").delete().eq("endpoint", String(endpoint));
   return { ok: !gone.length };
 }

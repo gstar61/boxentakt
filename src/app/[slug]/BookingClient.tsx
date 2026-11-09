@@ -527,8 +527,8 @@ function downloadIcs(b: Booked, salon: PublicSalon) {
   const esc = (t: string) => t.replace(/[\\,;]/g, (c) => `\\${c}`).replace(/\n/g, "\\n");
   const cancel = `${location.origin}/storno/${b.cancel_token}`;
   const ics = [
-    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Trimtable//DE", "BEGIN:VEVENT",
-    `UID:${b.cancel_token}@trimtable.de`, `DTSTAMP:${icsDate(new Date().toISOString())}`,
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Boxentakt//DE", "BEGIN:VEVENT",
+    `UID:${b.cancel_token}@boxentakt.de`, `DTSTAMP:${icsDate(new Date().toISOString())}`,
     `DTSTART:${icsDate(b.starts_at)}`, `DTEND:${icsDate(endOf(b, salon))}`,
     `SUMMARY:${esc(`${b.service_name} – ${salon.name}`)}`,
     ...(salon.address ? [`LOCATION:${esc(salon.address)}`] : []),

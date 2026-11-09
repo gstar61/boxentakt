@@ -117,11 +117,11 @@ export function BillingSection() {
           <h2 className="text-[15px] font-semibold">Abo</h2>
         </div>
         {b.exempt ? (
-          <p className="text-sm text-muted">Dieser Salon nutzt Trimtable dauerhaft kostenlos.</p>
+          <p className="text-sm text-muted">Dieser Salon nutzt Boxentakt dauerhaft kostenlos.</p>
         ) : subscribed(b) ? (
           <div className="grid gap-3">
             <p className="text-sm text-muted">
-              Trimtable-Abo ist {b.subscription_status === "past_due" ? <span className="text-danger">aktiv, letzte Zahlung offen</span> : "aktiv"}.
+              Boxentakt-Abo ist {b.subscription_status === "past_due" ? <span className="text-danger">aktiv, letzte Zahlung offen</span> : "aktiv"}.
               {b.current_period_end && (b.cancel_at_period_end ? ` Endet am ${date(b.current_period_end)}.` : ` Nächste Abrechnung am ${date(b.current_period_end)}.`)}
             </p>
             {owner && (
@@ -161,7 +161,7 @@ export function BillingSection() {
           </div>
           <p className="text-sm text-muted">
             Kunden zahlen bei der Buchung einen Teil des Preises per Karte, direkt auf dein eigenes Stripe-Konto. Bei Absage bis 24 Stunden vorher wird
-            automatisch erstattet, sonst behältst du die Anzahlung. Trimtable nimmt keine Provision, es fallen nur die Stripe-Gebühren an.
+            automatisch erstattet, sonst behältst du die Anzahlung. Boxentakt nimmt keine Provision, es fallen nur die Stripe-Gebühren an.
           </p>
         </div>
         {!b.charges_enabled ? (

@@ -115,14 +115,14 @@ export function PushSection() {
           <ol className="grid list-decimal gap-1 pl-5 text-muted">
             <li>In Safari unten auf <Share size={13} className="inline -translate-y-px" /> „Teilen“ tippen</li>
             <li>„Zum Home-Bildschirm“ wählen</li>
-            <li>Trimtable vom Home-Bildschirm öffnen und hier einschalten</li>
+            <li>Boxentakt vom Home-Bildschirm öffnen und hier einschalten</li>
           </ol>
         </div>
       )}
       {state === "unsupported" && <p className="text-sm text-muted">Dieser Browser unterstützt keine Benachrichtigungen. Chrome, Edge, Firefox oder Safari funktionieren.</p>}
       {state === "denied" && (
         <p className="flex items-start gap-2 text-sm text-muted">
-          <BellOff size={15} className="mt-0.5 shrink-0" /> Benachrichtigungen sind für diese Seite blockiert. Bitte in den Browser- bzw. Handy-Einstellungen für Trimtable erlauben und die Seite neu laden.
+          <BellOff size={15} className="mt-0.5 shrink-0" /> Benachrichtigungen sind für diese Seite blockiert. Bitte in den Browser- bzw. Handy-Einstellungen für Boxentakt erlauben und die Seite neu laden.
         </p>
       )}
 

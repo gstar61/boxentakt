@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 /** Installable dashboard app (home screen), required for push notifications on iPhone. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Trimtable",
-    short_name: "Trimtable",
+    name: "Boxentakt",
+    short_name: "Boxentakt",
     description: "Kalender und Online-Terminbuchung für deinen Salon",
     id: "/dashboard",
     start_url: "/dashboard",

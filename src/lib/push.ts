@@ -13,7 +13,7 @@ export function pushEnabled() {
 let configured = false;
 function setup() {
   if (configured) return;
-  webpush.setVapidDetails(process.env.VAPID_SUBJECT || "mailto:termine@trimtable.de", process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!, process.env.VAPID_PRIVATE_KEY!);
+  webpush.setVapidDetails(process.env.VAPID_SUBJECT || "mailto:termine@boxentakt.de", process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!, process.env.VAPID_PRIVATE_KEY!);
   configured = true;
 }
 

@@ -1,8 +1,8 @@
-# Trimtable
+# Boxentakt
 
-**Termine ohne Haarspalterei.** Online-Terminbuchung, Kalender und Kundenkartei für Friseursalons.
+**Termine im Takt.** Online-Terminbuchung, Kalender und Kundenkartei für Werkstätten (im Umbau aus der Trimtable-Vorlage).
 
-Live: [trimtable.de](https://trimtable.de) · Beispiel-Buchungsseite: [trimtable.de/good-hair](https://trimtable.de/good-hair)
+Live: [boxentakt.de](https://boxentakt.de) · Beispiel-Buchungsseite: [boxentakt.de/good-hair](https://boxentakt.de/good-hair)
 
 ## Funktionen
 
@@ -21,16 +21,14 @@ Doppelbuchungen verhindert die Datenbank selbst (Exclusion-Constraint auf `staff
 Öffentliche Zugriffe laufen nur über Security-Definer-Funktionen – Kundendaten sind nur für Salon-Mitglieder lesbar.
 Migrationen liegen in `supabase/migrations/`, Projektwissen und Konventionen in `CLAUDE.md`.
 
-- [Änderungsprotokoll](CHANGELOG.md) – was wann gebaut wurde
-- [Betrieb](docs/betrieb.md) – Domain, DNS, Mails, Supabase, Vercel, Stripe
 
 ## Umgebungsvariablen
 
 | Name | Zweck |
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase-Projekt |
-| `APP_URL` | Basis-URL für Links in Mails und Stripe (`https://trimtable.de`) |
-| `RESEND_API_KEY`, `MAIL_FROM` | Mailversand über Resend (`termine@trimtable.de`) |
+| `APP_URL` | Basis-URL für Links in Mails und Stripe (`https://boxentakt.de`) |
+| `RESEND_API_KEY`, `MAIL_FROM` | Mailversand über Resend (`termine@boxentakt.de`) |
 | `CRON_SECRET`, `REMINDER_KEY` | Erinnerungs-Cron (`REMINDER_KEY` = `app_secrets.cron_key`) |
 | `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_PRICE_ID_YEARLY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_CONNECT_WEBHOOK_SECRET`, `STRIPE_DB_KEY` | Abo und Anzahlungen |
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Web-Push |

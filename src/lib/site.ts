@@ -3,7 +3,7 @@ import { OPERATOR } from "./operator";
 
 /** Public site data for metadata, sitemap and structured data (schema.org). */
 export const SITE = {
-  url: "https://trimtable.de",
+  url: "https://boxentakt.de",
   name: BRAND,
   tagline: "Online-Termine für Friseursalons",
   description:

@@ -15,12 +15,12 @@ export default function GlobalError({ error, retry }: { error: unknown; retry: (
   return (
     <html lang="de" className={`${GeistSans.variable} h-full`}>
       <body className="grid min-h-full place-items-center px-4">
-        <title>Fehler · Trimtable</title>
+        <title>Fehler · Boxentakt</title>
         <main className="card grid w-full max-w-md justify-items-center gap-5 p-8 text-center">
           <span className="grid size-14 place-items-center rounded-2xl bg-danger/10 text-danger"><AlertTriangle size={28} strokeWidth={1.75} /></span>
           <div className="grid gap-2">
             <h1 className="text-2xl font-semibold">Da ist etwas schiefgelaufen</h1>
-            <p className="text-muted">Trimtable konnte nicht geladen werden. Bitte gleich noch einmal versuchen.</p>
+            <p className="text-muted">Boxentakt konnte nicht geladen werden. Bitte gleich noch einmal versuchen.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
             <button className="btn btn-primary" onClick={() => retry()}><RotateCcw size={16} /> Erneut versuchen</button>
@@ -28,7 +28,7 @@ export default function GlobalError({ error, retry }: { error: unknown; retry: (
             <a href="/" className="btn">Zur Startseite</a>
           </div>
           <p className="text-sm text-muted">
-            Bleibt der Fehler? <ReportLink subject="Fehler auf trimtable.de" digest={digest}>Melde es uns.</ReportLink>
+            Bleibt der Fehler? <ReportLink subject="Fehler auf boxentakt.de" digest={digest}>Melde es uns.</ReportLink>
           </p>
         </main>
       </body>

@@ -6,7 +6,7 @@
 
 const C = { bg: "#F7F8FA", card: "#FFFFFF", line: "#E5E7EB", fg: "#0B1220", muted: "#64748B", accent: "#047857", panel: "#F7F8FA" };
 const FONT = "Geist,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
-const SITE = "https://trimtable.de";
+const SITE = "https://boxentakt.de";
 
 export const esc = (s: unknown) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -40,7 +40,7 @@ const strip = (html: string) =>
 function brandRow(b: MailParts["brand"]) {
   if (b.kind === "platform") {
     return `<img src="${SITE}/icon-192.png" width="28" height="28" alt="" style="display:block;border-radius:8px">
-      </td><td style="padding-left:10px;font:600 15px/1 ${FONT};color:${C.fg};letter-spacing:-0.01em">Trimtable`;
+      </td><td style="padding-left:10px;font:600 15px/1 ${FONT};color:${C.fg};letter-spacing:-0.01em">Boxentakt`;
   }
   const mark = b.logo
     ? `<img src="${esc(b.logo)}" width="32" height="32" alt="" style="display:block;border-radius:9px;object-fit:cover">`
@@ -80,13 +80,13 @@ ${m.preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0
       ${m.note ? `<div style="margin:24px 0 0;padding:16px 0 0;border-top:1px solid ${C.line};font:13px/1.5 ${FONT};color:${C.muted}">${m.note}</div>` : ""}
     </td></tr>
     <tr><td style="padding:16px 4px 0;font:12px/1.5 ${FONT};color:${C.muted}">
-      Gesendet mit <a href="${SITE}" style="color:${C.muted}">Trimtable</a> · Termine ohne Haarspalterei.
+      Gesendet mit <a href="${SITE}" style="color:${C.muted}">Boxentakt</a> · Termine im Takt.
     </td></tr>
   </table>
 </td></tr></table></body></html>`;
 
   const text = [
-    m.brand.kind === "salon" ? m.brand.name : "Trimtable",
+    m.brand.kind === "salon" ? m.brand.name : "Boxentakt",
     "",
     m.title,
     m.intro ? "\n" + strip(m.intro) : "",
@@ -94,7 +94,7 @@ ${m.preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0
     m.button ? `\n${m.button.label}: ${m.button.url}` : "",
     m.body ? "\n" + strip(m.body) : "",
     m.note ? "\n" + strip(m.note) : "",
-    "\n--\nGesendet mit Trimtable – Termine ohne Haarspalterei. trimtable.de",
+    "\n--\nGesendet mit Boxentakt – Termine im Takt. boxentakt.de",
   ]
     .filter(Boolean)
     .join("\n")

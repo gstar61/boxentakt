@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-/** Recurring complaints about booking marketplaces (trade press, reviews, salon forums) and how Trimtable answers them. */
+/** Recurring complaints about booking marketplaces (trade press, reviews, salon forums) and how Boxentakt answers them. */
 const PROBLEMS = [
   { icon: Percent, pain: "„35 % vom ersten Termin gehen an die Plattform.“", fix: "Keine Provision. Ein fester Preis, egal wie viele Neukunden kommen." },
   { icon: UserCheck, pain: "„Meine Stammkundin wurde als Neukundin abgerechnet.“", fix: "Es gibt keine Neukunden-Einstufung, also nichts nachzuprüfen oder zu reklamieren." },
@@ -70,7 +70,7 @@ const FAQ: [string, string][] = [
   ["Brauchen meine Kunden ein Konto?", "Nein. Kunden wählen Leistung und Uhrzeit, tragen Name und Telefon ein – fertig."],
   ["Wie finden Neukunden meine Buchungsseite?", "Über den Buchungslink im Google-Unternehmensprofil, in der Instagram-Bio, auf Ihrer Webseite und über den QR-Code im Salon."],
   ["Kann ich weiter Termine am Telefon annehmen?", "Ja. Telefon- und Laufkundschaft tragen Sie mit zwei Klicks in denselben Kalender ein."],
-  ["Was kostet Trimtable?", "Die ersten 30 Tage sind kostenlos, ohne Kreditkarte. Danach 29 € im Monat, monatlich kündbar, oder 290 € im Jahr (zwei Monate gratis). Keine Provision, keine Umsatzsteuer."],
+  ["Was kostet Boxentakt?", "Die ersten 30 Tage sind kostenlos, ohne Kreditkarte. Danach 29 € im Monat, monatlich kündbar, oder 290 € im Jahr (zwei Monate gratis). Keine Provision, keine Umsatzsteuer."],
   ["Kann ich eine Anzahlung verlangen?", "Ja. Sie verbinden Ihr eigenes Stripe-Konto und legen einen Prozentsatz fest. Kunden stimmen vor der Zahlung einer klaren Ausfallregel zu. Bei Absage bis 24 Stunden vorher wird automatisch erstattet."],
   ["Kann ich mit dem Handy Kartenzahlungen annehmen?", "Ja, per QR-Code: Sie tippen den Betrag ein, die Kundin scannt und zahlt mit Apple Pay, Google Pay oder Karte auf ihrem eigenen Handy. Das Geld geht direkt auf Ihr Stripe-Konto. Eine Registrierkasse mit TSE ersetzt das nicht."],
   ["Wie komme ich wieder raus?", "Monatlich kündbar, ohne Mindestlaufzeit. Ihre Kundenkartei laden Sie jederzeit als Excel-Datei herunter."],
@@ -81,7 +81,7 @@ const FAQ: [string, string][] = [
 ];
 
 export default async function Home() {
-  const qr = await QRCode.toString("https://trimtable.de/bezahlt", { type: "svg", margin: 1, color: { dark: "#0b1220", light: "#ffffff" } });
+  const qr = await QRCode.toString("https://boxentakt.de/bezahlt", { type: "svg", margin: 1, color: { dark: "#0b1220", light: "#ffffff" } });
   return (
     <div className="overflow-x-clip">
       <JsonLd data={[organizationSchema(), websiteSchema(), softwareSchema(), faqSchema(FAQ)]} />
@@ -91,10 +91,10 @@ export default async function Home() {
             <span className="grid size-8 place-items-center rounded-[10px] border border-accent/25 bg-accent/10 text-accent">
               <LogoMark size={15} />
             </span>
-            Trimtable
+            Boxentakt
           </Link>
           <nav className="hidden items-center gap-6 text-sm text-muted md:flex">
-            <a href="#warum" className="hover:text-fg">Warum Trimtable</a>
+            <a href="#warum" className="hover:text-fg">Warum Boxentakt</a>
             <a href="#funktionen" className="hover:text-fg">Funktionen</a>
             <a href="#rechner" className="hover:text-fg">Rechner</a>
             <a href="#preise" className="hover:text-fg">Preise</a>
@@ -325,7 +325,7 @@ export default async function Home() {
               </div>
             </div>
             <div className="grid gap-4">
-              <span className="label">Warum Trimtable?</span>
+              <span className="label">Warum Boxentakt?</span>
               <blockquote className="text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
                 <span className="text-accent">Trim</span> + <span className="text-accent">Timetable</span>.
               </blockquote>
@@ -354,7 +354,7 @@ export default async function Home() {
       <footer className="border-t border-line">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 text-sm sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
           <div className="grid content-start gap-3">
-            <span className="flex items-center gap-2 font-semibold"><LogoMark size={15} className="text-accent" /> Trimtable</span>
+            <span className="flex items-center gap-2 font-semibold"><LogoMark size={15} className="text-accent" /> Boxentakt</span>
             <p className="max-w-xs text-muted"><span className="text-fg">{SLOGAN}</span> Online-Termine, Kalender und Kartenzahlung für Friseursalons.</p>
           </div>
           <div className="grid content-start gap-2 text-muted">
@@ -373,7 +373,7 @@ export default async function Home() {
         </div>
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 border-t border-line px-4 py-5 text-xs text-dim sm:px-6">
           <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <span>© {new Date().getFullYear()} Trimtable</span>
+            <span>© {new Date().getFullYear()} Boxentakt</span>
             <MadeInMannheim />
           </span>
           <span className="flex items-center gap-2">Darstellung <ThemeToggle className="icon-btn !size-8" /></span>

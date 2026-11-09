@@ -9,11 +9,11 @@ const mail = <a href={`mailto:${OPERATOR.email}`} className="text-accent hover:u
 export default function Page() {
   return (
     <LegalPage title="Datenschutzerklärung">
-      <p>Stand: Oktober 2026. Diese Erklärung nennt ausschließlich Dienste, die in Trimtable tatsächlich eingesetzt werden.</p>
+      <p>Stand: Oktober 2026. Diese Erklärung nennt ausschließlich Dienste, die in Boxentakt tatsächlich eingesetzt werden.</p>
       <section>
         <h2>1. Verantwortlicher</h2>
         <p>
-          Verantwortlich für die Datenverarbeitung auf dieser Website und in der Trimtable-Anwendung ist {OPERATOR.name}, {OPERATOR.address},
+          Verantwortlich für die Datenverarbeitung auf dieser Website und in der Boxentakt-Anwendung ist {OPERATOR.name}, {OPERATOR.address},
           E-Mail: {mail}. Die vollständigen Angaben finden Sie im{" "}
           <Link href="/impressum" className="text-accent hover:underline">Impressum</Link>.
         </p>
@@ -47,7 +47,7 @@ export default function Page() {
         <h2>5. E-Mail-Versand (Resend)</h2>
         <p>
           Bestätigungs-, Erinnerungs-, Absage- und Wartelisten-E-Mails zu Terminen sowie die E-Mails zur Registrierung, Team-Einladung und zum
-          Zurücksetzen des Passworts versenden wir über den E-Mail-Dienst Resend (Resend Inc., USA) von der Adresse termine@trimtable.de. Dabei werden
+          Zurücksetzen des Passworts versenden wir über den E-Mail-Dienst Resend (Resend Inc., USA) von der Adresse termine@boxentakt.de. Dabei werden
           die E-Mail-Adresse des Empfängers und der Inhalt der Nachricht verarbeitet. Die Übermittlung in die USA erfolgt auf Grundlage der
           EU-Standardvertragsklauseln.
         </p>
@@ -55,7 +55,7 @@ export default function Page() {
       <section>
         <h2>6. Zahlungen (Stripe)</h2>
         <p>
-          Das Trimtable-Abo rechnen wir über Stripe Payments Europe Ltd. (Dublin, Irland) ab. Beim Abschluss gibt der Salon Name, Rechnungsadresse,
+          Das Boxentakt-Abo rechnen wir über Stripe Payments Europe Ltd. (Dublin, Irland) ab. Beim Abschluss gibt der Salon Name, Rechnungsadresse,
           optional eine Umsatzsteuer-ID und seine Zahlungsmethode direkt bei Stripe ein; Zahlungsdaten laufen nicht über unsere Server. Wir speichern
           nur die Kunden- und Abo-Kennung sowie den Abo-Status. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO.
         </p>
@@ -85,7 +85,7 @@ export default function Page() {
         <h2>9. Daten der Salonkunden</h2>
         <p>
           Wenn Kundinnen und Kunden über eine Buchungsseite einen Termin buchen, ist der jeweilige Salon für diese Daten verantwortlich. Seine eigene
-          Datenschutzerklärung ist auf der Buchungsseite verlinkt. Trimtable verarbeitet diese Daten im Auftrag des Salons (Art. 28 DSGVO). Einen
+          Datenschutzerklärung ist auf der Buchungsseite verlinkt. Boxentakt verarbeitet diese Daten im Auftrag des Salons (Art. 28 DSGVO). Einen
           Auftragsverarbeitungsvertrag (AVV) stellen wir auf Anfrage zur Verfügung.
         </p>
       </section>

@@ -31,7 +31,7 @@ export function DataSection() {
       <div className="grid gap-1">
         <h2 className="flex items-center gap-2 text-[15px] font-semibold"><ShieldCheck size={16} /> Daten &amp; Datenschutz</h2>
         <p className="text-sm text-muted">
-          Alles, was Trimtable zu deinem Salon und Konto speichert, als Datei (JSON): Einstellungen, Team, Kunden, Termine, Gutscheine. Für Auskünfte nach
+          Alles, was Boxentakt zu deinem Salon und Konto speichert, als Datei (JSON): Einstellungen, Team, Kunden, Termine, Gutscheine. Für Auskünfte nach
           Art. 15 DSGVO oder einen Wechsel.
         </p>
       </div>

@@ -1,3 +1,3 @@
 /** Product name and slogan, used on the site, in the social preview and in mails. */
-export const BRAND = "Trimtable";
-export const SLOGAN = "Termine ohne Haarspalterei.";
+export const BRAND = "Boxentakt";
+export const SLOGAN = "Termine im Takt.";

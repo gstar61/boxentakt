@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 /** Without `slug` the page belongs to the platform itself and links back to the landing page. */
-export function LegalPage({ slug, salonName = "Trimtable", title, children }: { slug?: string; salonName?: string; title: string; children: React.ReactNode }) {
+export function LegalPage({ slug, salonName = "Boxentakt", title, children }: { slug?: string; salonName?: string; title: string; children: React.ReactNode }) {
   return (
     <main className="mx-auto grid max-w-2xl gap-8 px-4 py-12">
       <Link href={slug ? `/${slug}` : "/"} className="btn btn-ghost btn-sm w-fit">
@@ -24,7 +24,7 @@ export function LegalFooter({ slug }: { slug: string }) {
     <footer className="flex flex-wrap gap-4 border-t border-line pt-6 text-xs text-dim">
       <Link href={`/${slug}/impressum`} className="hover:text-fg">Impressum</Link>
       <Link href={`/${slug}/datenschutz`} className="hover:text-fg">Datenschutz</Link>
-      <Link href="/" className="ml-auto hover:text-fg">Terminbuchung mit Trimtable</Link>
+      <Link href="/" className="ml-auto hover:text-fg">Terminbuchung mit Boxentakt</Link>
     </footer>
   );
 }

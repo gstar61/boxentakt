@@ -1,4 +1,4 @@
-/** Trimtable mark: a 3×3 timetable, one slot taken (foreground), one past (faded). Inherits the accent via currentColor. */
+/** Boxentakt mark: a 3×3 timetable, one slot taken (foreground), one past (faded). Inherits the accent via currentColor. */
 export function LogoMark({ size = 16, className = "" }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="13 13 38 38" aria-hidden className={className}>

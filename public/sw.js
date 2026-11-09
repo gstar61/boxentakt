@@ -1,4 +1,4 @@
-// Trimtable service worker: shows push notifications for new bookings and opens the calendar on tap.
+// Boxentakt service worker: shows push notifications for new bookings and opens the calendar on tap.
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
 
@@ -10,7 +10,7 @@ self.addEventListener("push", (event) => {
     data = { body: event.data ? event.data.text() : "" };
   }
   event.waitUntil(
-    self.registration.showNotification(data.title || "Trimtable", {
+    self.registration.showNotification(data.title || "Boxentakt", {
       body: data.body || "",
       icon: "/icon-192.png",
       badge: "/badge.png",

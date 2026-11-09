@@ -121,7 +121,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   {salons.map((s) => <option key={s.id} value={s.id} className="bg-card">{s.name}</option>)}
                 </select>
               ) : (
-                <div className="truncate font-semibold tracking-tight">{ctx?.salon.name ?? "Trimtable"}</div>
+                <div className="truncate font-semibold tracking-tight">{ctx?.salon.name ?? "Boxentakt"}</div>
               )}
               <div className="truncate text-xs text-muted">{user?.email}</div>
             </div>

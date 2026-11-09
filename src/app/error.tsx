@@ -25,7 +25,7 @@ export default function ErrorPage({ error, retry }: { error: unknown; retry: () 
           <Link href="/" className="btn">Zur Startseite</Link>
         </div>
         <p className="text-sm text-muted">
-          Passiert das öfter? <ReportLink subject="Fehler auf trimtable.de" digest={digest}>Melde es uns.</ReportLink>
+          Passiert das öfter? <ReportLink subject="Fehler auf boxentakt.de" digest={digest}>Melde es uns.</ReportLink>
         </p>
         {digest && <p className="font-mono text-xs text-dim">Fehler-ID {digest}</p>}
       </main>

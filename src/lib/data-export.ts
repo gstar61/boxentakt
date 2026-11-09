@@ -23,7 +23,7 @@ async function rows(table: string, column: string, value: string) {
   return data ?? [];
 }
 
-/** Everything Trimtable stores for this salon and the signed-in account. */
+/** Everything Boxentakt stores for this salon and the signed-in account. */
 export async function exportSalonData(salon: { id: string; slug: string }) {
   const sb = browserClient();
   const { data: auth } = await sb.auth.getUser();
@@ -51,7 +51,7 @@ export async function exportSalonData(salon: { id: string; slug: string }) {
       u ? rows("push_subscriptions", "user_id", u.id) : [],
       u ? rows("feedback", "user_id", u.id) : [],
     ]);
-  download(`trimtable-daten-${salon.slug}-${stamp()}.json`, {
+  download(`boxentakt-daten-${salon.slug}-${stamp()}.json`, {
     auskunft: {
       erstellt: new Date().toISOString(),
       grundlage: "Art. 15 und Art. 20 DSGVO",
@@ -99,7 +99,7 @@ export async function exportCustomerData(salon: { id: string; slug: string; name
       erstellt: new Date().toISOString(),
       grundlage: "Art. 15 DSGVO",
       verantwortlich: salon.name,
-      auftragsverarbeiter: `Trimtable (${OPERATOR.company})`,
+      auftragsverarbeiter: `Boxentakt (${OPERATOR.company})`,
       zwecke: "Terminbuchung und -verwaltung, Terminerinnerungen, Kundenkartei des Salons",
       empfaenger: "Supabase (Datenbank, Frankfurt), Vercel (Hosting), Resend (E-Mail-Versand), bei Anzahlung oder Gutschein Stripe",
       speicherdauer: "Solange Sie Kundin bzw. Kunde des Salons sind oder bis zur Löschung auf Wunsch",
