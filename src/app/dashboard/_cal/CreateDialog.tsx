@@ -30,6 +30,7 @@ export function CreateDialog(props: {
   const [found, setFound] = useState<Found[]>([]);
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
+  const [plate, setPlate] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const service = props.services.find((s) => s.id === serviceId);
@@ -87,6 +88,7 @@ export function CreateDialog(props: {
       during: `[${start.toISOString()},${end.toISOString()})`,
       source: "salon",
       note: note.trim() || null,
+      license_plate: plate.trim().toUpperCase().slice(0, 12) || null,
     });
     setBusy(false);
     if (error) {
@@ -136,6 +138,7 @@ export function CreateDialog(props: {
         {service && (
           <SlotPicker id="c-time" salonId={props.salonId} tz={props.tz} step={props.step} date={date} staffId={staffId} durationMin={service.duration_min} value={min} onChange={setMin} />
         )}
+        <TextField id="c-plate" label="Kennzeichen (optional)" value={plate} onChange={setPlate} />
         <TextField id="c-note" label="Hinweis (optional)" value={note} onChange={setNote} />
         {err && <p role="alert" className="text-sm text-danger">{err}</p>}
         <div className="flex gap-2">

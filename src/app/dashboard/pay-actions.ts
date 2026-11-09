@@ -28,8 +28,8 @@ export async function createCounterPayment(
   const amount = Math.round(Number(amountCents));
   if (!Number.isFinite(amount) || amount < 50 || amount > 100_000) return { ok: false, message: "Bitte einen Betrag zwischen 0,50 € und 1.000 € eingeben." };
   const a = await memberAccount(accessToken, salonId);
-  if (!a) return { ok: false, message: "Kartenzahlung ist für diesen Salon noch nicht eingerichtet." };
-  const text = String(description ?? "").trim().slice(0, 120) || "Friseurleistung";
+  if (!a) return { ok: false, message: "Kartenzahlung ist für diesen Betrieb noch nicht eingerichtet." };
+  const text = String(description ?? "").trim().slice(0, 120) || "Werkstattleistung";
   try {
     const s = await stripe().checkout.sessions.create(
       {
@@ -88,7 +88,7 @@ export async function todaysCounterPayments(accessToken: string, salonId: string
     );
     return list.data
       .filter((s) => s.metadata?.kind === "counter" && s.metadata.salon_id === String(salonId) && s.payment_status === "paid")
-      .map((s) => ({ id: s.id, amount: s.amount_total ?? 0, description: s.line_items?.data[0]?.description ?? "Friseurleistung", created: s.created }));
+      .map((s) => ({ id: s.id, amount: s.amount_total ?? 0, description: s.line_items?.data[0]?.description ?? "Werkstattleistung", created: s.created }));
   } catch (e) {
     console.error("counter list failed", e);
     return [];

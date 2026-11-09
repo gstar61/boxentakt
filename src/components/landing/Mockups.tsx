@@ -15,8 +15,8 @@ export function PhoneFrame({ children, className = "" }: { children: React.React
 /** The salon's public booking page on a phone. */
 export function PhoneBooking() {
   const services = [
-    ["Damen · Schneiden & Föhnen", "45 Min.", "ab 49 €", true],
-    ["Herren · Schneiden", "30 Min.", "ab 28 €", false],
+    ["Räderwechsel (Sommer/Winter)", "45 Min.", "49 €", true],
+    ["Ölwechsel inkl. Filter", "60 Min.", "89 €", false],
     ["Balayage", "2 Std.", "ab 129 €", false],
   ] as const;
   return (
@@ -25,7 +25,7 @@ export function PhoneBooking() {
         <div className="flex items-center gap-2">
           <span className="grid size-7 place-items-center rounded-lg border border-accent/25 bg-accent/10 text-accent"><LogoMark size={12} /></span>
           <div>
-            <div className="text-[12px] font-semibold">Studio Mira</div>
+            <div className="text-[12px] font-semibold">Autowerkstatt Mira</div>
             <div className="flex items-center gap-1 text-[9px] text-muted"><MapPin size={9} /> Mannheim, Quadrate</div>
           </div>
         </div>
@@ -65,9 +65,9 @@ export function PhonePay() {
     <PhoneFrame>
       <div className="grid h-full content-between px-5 pt-14 pb-6 text-[11px]">
         <div className="grid gap-4">
-          <div className="text-muted">Studio Mira</div>
+          <div className="text-muted">Autowerkstatt Mira</div>
           <div className="grid gap-1">
-            <div className="text-[12px] text-muted">Schnitt und Färben</div>
+            <div className="text-[12px] text-muted">Räderwechsel und Bremsencheck</div>
             <div className="text-[30px] font-semibold tracking-tight tabular-nums">84,00 €</div>
           </div>
           <div className="grid gap-2">
@@ -104,11 +104,11 @@ export function ReminderStack() {
           <span className="grid size-8 place-items-center rounded-lg bg-accent/12 text-accent"><BellRing size={15} /></span>
           <div className="text-sm">
             <div className="font-medium">Erinnerung: Ihr Termin morgen</div>
-            <div className="text-xs text-muted">Studio Mira · heute, 18:00</div>
+            <div className="text-xs text-muted">Autowerkstatt Mira · heute, 18:00</div>
           </div>
         </div>
         <div className="grid gap-1.5 rounded-xl border border-line bg-card-2 p-3.5 text-[13px]">
-          {[["Termin", "Mi, 28. Okt., 14:30"], ["Leistung", "Schneiden & Föhnen"], ["Bei", "Anna"]].map(([k, v]) => (
+          {[["Termin", "Mi, 28. Okt., 14:30"], ["Leistung", "Räderwechsel"], ["Kennzeichen", "MA-AB 123"]].map(([k, v]) => (
             <div key={k} className="flex justify-between gap-4"><span className="text-muted">{k}</span><span>{v}</span></div>
           ))}
         </div>
@@ -118,7 +118,7 @@ export function ReminderStack() {
         <span className="grid size-8 place-items-center rounded-lg bg-accent/12 text-accent"><CalendarCheck2 size={15} /></span>
         <div className="flex-1 text-sm">
           <div className="font-medium">Anzahlung 15 € bezahlt</div>
-          <div className="text-xs text-muted">Kundin hat der Ausfallregel zugestimmt</div>
+          <div className="text-xs text-muted">Kunde hat der Ausfallregel zugestimmt</div>
         </div>
         <Check size={16} className="text-accent" />
       </div>
@@ -135,7 +135,7 @@ export function VoucherStack() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold">
             <span className="grid size-7 place-items-center rounded-lg border border-accent/25 bg-accent/10 text-accent"><LogoMark size={12} /></span>
-            Studio Mira
+            Autowerkstatt Mira
           </div>
           <span className="flex items-center gap-1.5 text-xs text-muted"><Gift size={13} /> Gutschein</span>
         </div>

@@ -13,10 +13,15 @@ import type { Booked } from "@/lib/mail";
 import type { PublicSalon } from "@/lib/salon";
 
 
+type VehicleClass = "pkw" | "suv" | "transporter";
+const CLASS_LABEL: Record<VehicleClass, string> = { pkw: "Pkw", suv: "SUV / Geländewagen", transporter: "Transporter / Bus" };
+const PLATE = /^[A-ZÄÖÜ0-9][A-ZÄÖÜ0-9 -]{2,11}$/;
+const normalizePlate = (s: string) => s.trim().replace(/\s+/g, " ").toUpperCase();
+
 /** Deposit in cents for a price, same rule as book_appointment (min. 0,50 €). */
 const depositFor = (priceCents: number, percent: number) => (percent > 0 ? Math.max(Math.round((priceCents * percent) / 100), 50) : 0);
 
-/** Price with a given person (some salons charge more for the master stylist). */
+/** Price with a given person (Meister und Geselle können verschieden abrechnen). */
 const priceOf = (s: Service, staffId: string | null) => (staffId ? s.staff_prices?.[staffId] : undefined) ?? s.price_cents;
 
 export default function BookingClient({ salon, aborted, initialDay, initialService, vouchers }: { salon: PublicSalon; aborted?: boolean; initialDay?: string; initialService?: string; vouchers?: boolean }) {
@@ -35,6 +40,8 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
   const busy = busyState?.key === busyKey ? busyState.list : null;
   const [startIso, setStartIso] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", phone: "", email: "", note: "" });
+  const [vehicle, setVehicle] = useState<{ plate: string; cls: VehicleClass; info: string }>({ plate: "", cls: "pkw", info: "" });
+  const extra = salon.class_extra[vehicle.cls] ?? { min: 0, cents: 0 };
   const [error, setError] = useState<string | null>(aborted ? "Die Anzahlung wurde abgebrochen, der Termin ist nicht gebucht. Sie können eine neue Zeit wählen." : null);
   const [done, setDone] = useState<Booked | null>(null);
   const [pending, start] = useTransition();
@@ -48,9 +55,10 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
     ? {
         id: chosen[0].id,
         name: chosen.map((s) => s.name).join(" + "),
-        duration_min: chosen.reduce((n, s) => n + s.duration_min, 0),
-        price_cents: chosen.reduce((n, s) => n + s.price_cents, 0),
-        staff_prices: Object.fromEntries(salon.staff.map((st) => [st.id, chosen.reduce((n, s) => n + priceOf(s, st.id), 0)])),
+        // Fahrzeugklasse: Zuschlag in Minuten und Cent einmal je Termin
+        duration_min: chosen.reduce((n, s) => n + s.duration_min, 0) + extra.min,
+        price_cents: chosen.reduce((n, s) => n + s.price_cents, 0) + extra.cents,
+        staff_prices: Object.fromEntries(salon.staff.map((st) => [st.id, chosen.reduce((n, s) => n + priceOf(s, st.id), 0) + extra.cents])),
       }
     : undefined;
 
@@ -109,7 +117,8 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
     if (!service || !picked) return;
     setError(null);
     if (form.name.trim().length < 2) return setError("Bitte den vollständigen Namen eintragen.");
-    if (form.phone.replace(/\D/g, "").length < 6) return setError("Bitte eine Telefonnummer eintragen, damit der Salon Sie erreicht.");
+    if (form.phone.replace(/\D/g, "").length < 6) return setError("Bitte eine Telefonnummer eintragen, damit die Werkstatt Sie erreicht.");
+    if (!PLATE.test(normalizePlate(vehicle.plate))) return setError("Bitte das Kennzeichen eintragen, z. B. MA-AB 123.");
     if (deposit && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) return setError("Für die Anzahlung bitte eine E-Mail-Adresse angeben.");
     if (deposit && !terms) return setError("Bitte den Stornobedingungen zustimmen.");
     start(async () => {
@@ -120,6 +129,9 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
         staffId: staffId !== "any" ? staffId : varies ? picked.staffId : null,
         start: picked.start.toISOString(),
         ...form,
+        plate: normalizePlate(vehicle.plate),
+        vehicleClass: vehicle.cls,
+        vehicleInfo: vehicle.info,
         website: trap,
         acceptedTerms: terms,
         elapsedMs: Date.now() - openedAt,
@@ -129,6 +141,7 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
       } else if (res.ok) {
         setDone(res.booking);
         setForm({ name: "", phone: "", email: "", note: "" });
+        setVehicle((v) => ({ ...v, plate: "", info: "" }));
       } else {
         setError(res.message);
         if (res.code === "slot_taken") {
@@ -249,7 +262,7 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
       ) : (
       <div className="grid items-start gap-5 lg:grid-cols-[1fr_1.15fr]">
         <Step n={1} title="Leistung" active={!service}>
-          {salon.services.length === 0 ? <p className="empty">Noch keine Leistungen eingetragen.</p> : <p className="-mt-1 text-[13px] text-muted">Auch mehrere möglich, z. B. Schnitt und Farbe.</p>}
+          {salon.services.length === 0 ? <p className="empty">Noch keine Leistungen eingetragen.</p> : <p className="-mt-1 text-[13px] text-muted">Auch mehrere möglich, z. B. Räderwechsel und Bremsencheck.</p>}
           <div className="grid gap-5">
             {groupServices(salon.services).map((g) => (
               <div key={g.title ?? "all"} className="grid gap-2">
@@ -270,6 +283,20 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
                 ))}
               </div>
             ))}
+          </div>
+          <div className="grid gap-2">
+            <span className="label">Fahrzeug</span>
+            <div className="flex flex-wrap gap-2">
+              {(Object.keys(CLASS_LABEL) as VehicleClass[]).map((c) => {
+                const x = salon.class_extra[c];
+                return (
+                  <button key={c} type="button" className="pill" aria-pressed={vehicle.cls === c} onClick={() => { setVehicle({ ...vehicle, cls: c }); setStartIso(null); }}>
+                    {CLASS_LABEL[c]}
+                    {x && (x.min > 0 || x.cents > 0) && <span className="ml-1.5 tabular-nums opacity-70">+{x.min > 0 ? duration(x.min) : ""}{x.min > 0 && x.cents > 0 ? " · " : ""}{x.cents > 0 ? euro(x.cents) : ""}</span>}
+                  </button>
+                );
+              })}
+            </div>
           </div>
           {service && (
             <div className="sticky bottom-3 z-10 flex items-center justify-between gap-3 rounded-[14px] border border-accent/30 bg-card px-4 py-3 shadow-lg lg:static lg:shadow-none">
@@ -370,6 +397,7 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
                 <dl className="grid gap-2.5 rounded-[14px] border border-line bg-card-2 p-4 text-sm">
                   <Row k={chosen.length > 1 ? "Leistungen" : "Leistung"} v={service.name} />
                   <Row k="Termin" v={`${longDate(date)}, ${hm(picked.min)}–${hm(picked.min + service.duration_min)}`} />
+                  <Row k="Fahrzeug" v={CLASS_LABEL[vehicle.cls]} />
                   <Row k="Bei" v={salon.staff.find((s) => s.id === picked.staffId)?.name ?? ""} />
                   <Row k="Preis" v={euro(price)} mono />
                   {deposit > 0 && <Row k="Anzahlung jetzt" v={euro(deposit)} mono />}
@@ -386,26 +414,28 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
                     onChange={(e) => setTrap(e.target.value)}
                   />
                   <Field id="name" label="Name" autoComplete="name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+                  <Field id="plate" label="Kennzeichen" autoComplete="off" value={vehicle.plate} onChange={(v) => setVehicle({ ...vehicle, plate: v.toUpperCase() })} />
+                  <Field id="vehicle" label="Fahrzeug, z. B. VW Golf 7 (optional)" autoComplete="off" value={vehicle.info} onChange={(v) => setVehicle({ ...vehicle, info: v })} />
                   <Field id="phone" label="Telefon" type="tel" autoComplete="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
                   <Field id="email" label={deposit ? "E-Mail (für Bestätigung und Beleg)" : "E-Mail (für Bestätigung, optional)"} type="email" autoComplete="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
                   <div className="grid gap-1.5">
                     <label htmlFor="note" className="text-[13px] text-muted">Hinweis (optional)</label>
-                    <textarea id="note" className="input" maxLength={500} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="z. B. Haarlänge, Allergien" />
+                    <textarea id="note" className="input" maxLength={500} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="z. B. Reifengröße, Geräusch beim Bremsen" />
                   </div>
                   {deposit > 0 && (
                     <label className="flex items-start gap-3 rounded-[14px] border border-line bg-card-2 p-3.5 text-[13px] leading-relaxed text-muted">
                       <input type="checkbox" className="mt-0.5 size-4 shrink-0 accent-[var(--color-accent)]" checked={terms} onChange={(e) => setTerms(e.target.checked)} />
                       <span>
                         Ich zahle jetzt {euro(deposit)} an, die mit dem Endpreis verrechnet werden. Bei Absage bis 24 Stunden vorher wird die Anzahlung
-                        automatisch erstattet. Bei späterer Absage oder Nichterscheinen behält der Salon sie als Ausfallpauschale; der Nachweis, dass kein
+                        automatisch erstattet. Bei späterer Absage oder Nichterscheinen behält die Werkstatt sie als Ausfallpauschale; der Nachweis, dass kein
                         oder ein geringerer Schaden entstanden ist, bleibt mir vorbehalten.
                       </span>
                     </label>
                   )}
                   {error && <p role="alert" className="text-sm text-danger">{error}</p>}
                   <p className="text-xs text-dim">
-                    Der Endpreis richtet sich nach Haarlänge und Aufwand. Mit der Buchung werden Name und Kontaktdaten zur Terminverwaltung beim Salon gespeichert. Mit E-Mail-Adresse bekommen Sie ggf. eine Bitte um Bewertung und eine Erinnerung an den nächsten Termin; abmelden geht jederzeit per Link in der Mail.
-                    {deposit > 0 && " Die Zahlung läuft über Stripe direkt an den Salon."}
+                    Der Endpreis richtet sich nach dem tatsächlichen Aufwand (z. B. zusätzliche Arbeiten oder Teile). Mit der Buchung werden Name, Kontaktdaten und Kennzeichen zur Terminverwaltung bei der Werkstatt gespeichert. Mit E-Mail-Adresse bekommen Sie ggf. eine Bitte um Bewertung und eine Erinnerung an den nächsten Termin; abmelden geht jederzeit per Link in der Mail.
+                    {deposit > 0 && " Die Zahlung läuft über Stripe direkt an die Werkstatt."}
                   </p>
                   <div>
                     <button type="submit" className="btn btn-primary" disabled={pending}>
@@ -533,7 +563,7 @@ function downloadIcs(b: Booked, salon: PublicSalon) {
     `SUMMARY:${esc(`${b.service_name} – ${salon.name}`)}`,
     ...(salon.address ? [`LOCATION:${esc(salon.address)}`] : []),
     `DESCRIPTION:${esc(`Bei ${b.staff_name}. Absagen: ${cancel}`)}`,
-    "BEGIN:VALARM", "TRIGGER:-PT2H", "ACTION:DISPLAY", "DESCRIPTION:Friseurtermin", "END:VALARM",
+    "BEGIN:VALARM", "TRIGGER:-PT2H", "ACTION:DISPLAY", "DESCRIPTION:Werkstatttermin", "END:VALARM",
     "END:VEVENT", "END:VCALENDAR",
   ].join("\r\n");
   const a = document.createElement("a");

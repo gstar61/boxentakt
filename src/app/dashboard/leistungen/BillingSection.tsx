@@ -117,7 +117,7 @@ export function BillingSection() {
           <h2 className="text-[15px] font-semibold">Abo</h2>
         </div>
         {b.exempt ? (
-          <p className="text-sm text-muted">Dieser Salon nutzt Boxentakt dauerhaft kostenlos.</p>
+          <p className="text-sm text-muted">Dieser Betrieb nutzt Boxentakt dauerhaft kostenlos.</p>
         ) : subscribed(b) ? (
           <div className="grid gap-3">
             <p className="text-sm text-muted">

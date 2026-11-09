@@ -31,9 +31,9 @@ export default function Page() {
         <p>{`${OPERATOR.owner}, ${OPERATOR.address}`}</p>
       </section>
       <section>
-        <h2>Buchungsseiten der Salons</h2>
+        <h2>Buchungsseiten der Betriebe</h2>
         <p>
-          Für die Inhalte der Buchungsseiten (z. B. Leistungen, Preise, Öffnungszeiten) ist der jeweilige Salon verantwortlich. Sein Impressum ist
+          Für die Inhalte der Buchungsseiten (z. B. Leistungen, Preise, Öffnungszeiten) ist der jeweilige Betrieb verantwortlich. Sein Impressum ist
           auf der jeweiligen Buchungsseite verlinkt.
         </p>
       </section>

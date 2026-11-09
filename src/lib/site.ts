@@ -5,19 +5,19 @@ import { OPERATOR } from "./operator";
 export const SITE = {
   url: "https://boxentakt.de",
   name: BRAND,
-  tagline: "Online-Termine für Friseursalons",
+  tagline: "Online-Termine für Werkstätten",
   description:
-    "Eigene Buchungsseite, Kalender fürs Team, Erinnerungen, Anzahlung, Gutscheine und Kartenzahlung per QR-Code. Für Friseursalons: 29 € im Monat, 30 Tage gratis.",
+    "Eigene Buchungsseite, Kalender fürs Team, Erinnerungen, Anzahlung, Gutscheine und Kartenzahlung per QR-Code. Für Werkstätten: 29 € im Monat, 30 Tage gratis.",
   slogan: SLOGAN,
   keywords: [
-    "Online-Terminbuchung Friseur",
-    "Terminbuchung Friseursalon",
-    "Friseur Kalender",
-    "Buchungssystem Friseur",
-    "Treatwell Alternative",
+    "Online-Terminbuchung Werkstatt",
+    "Terminbuchung Werkstatt",
+    "Werkstatt Kalender",
+    "Buchungssystem Werkstatt",
+    "Reifenwechsel Termin online",
     "Online-Termine ohne Provision",
-    "Salon Software",
-    "Gutscheine Friseur",
+    "Werkstattsoftware",
+    "Gutscheine Werkstatt",
   ],
 };
 

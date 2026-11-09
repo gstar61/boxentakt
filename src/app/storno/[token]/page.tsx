@@ -79,7 +79,7 @@ export default async function Page(props: PageProps<"/storno/[token]">) {
         <p className="empty">Die Zahlung wird noch bestätigt. Bitte die Seite gleich neu laden.</p>
       ) : (
         <p className="empty">
-          Online verschieben oder absagen geht nur bis 2 Stunden vor dem Termin.{a.salon_phone ? ` Bitte rufen Sie den Salon an: ${a.salon_phone}` : ""}
+          Online verschieben oder absagen geht nur bis 2 Stunden vor dem Termin.{a.salon_phone ? ` Bitte rufen Sie den Betrieb an: ${a.salon_phone}` : ""}
         </p>
       )}
     </main>

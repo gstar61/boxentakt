@@ -28,7 +28,7 @@ export function TrialBanner({ salonId }: { salonId: string }) {
           ? <>Testphase endet in {days} {days === 1 ? "Tag" : "Tagen"}.<span className="hidden sm:inline"> Danach nimmt die Buchungsseite nur mit Abo Termine an.</span></>
           : `Die Testphase ist abgelaufen. Online-Buchungen sind pausiert, bis das Abo aktiv ist.${
               b.delete_after
-                ? ` Ohne Abo löschen wir den Salon am ${new Date(b.delete_after).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" })}.`
+                ? ` Ohne Abo löschen wir den Betrieb am ${new Date(b.delete_after).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" })}.`
                 : ""
             }`}
       </span>

@@ -52,7 +52,7 @@ export default function VoucherClient({ salon, open }: { salon: Salon; open: boo
       </div>
 
       {!open ? (
-        <p className="empty">Online gibt es hier gerade keine Gutscheine.{salon.phone ? ` Gerne im Salon oder unter ${salon.phone}.` : " Gerne direkt im Salon."}</p>
+        <p className="empty">Online gibt es hier gerade keine Gutscheine.{salon.phone ? ` Gerne im Betrieb oder unter ${salon.phone}.` : " Gerne direkt im Betrieb."}</p>
       ) : (
         <form onSubmit={submit} noValidate className="card grid gap-5 p-5 sm:p-6">
           <div className="grid gap-2">
@@ -80,7 +80,7 @@ export default function VoucherClient({ salon, open }: { salon: Salon; open: boo
           <button className="btn btn-primary" disabled={pending}>
             <Lock size={16} /> {pending ? "Weiter zur Zahlung …" : `${Number.isFinite(cents) && cents >= 1000 ? euro(cents) : "Betrag"} bezahlen`}
           </button>
-          <p className="text-xs text-dim">Zahlung per Karte über Stripe direkt an {salon.name}. Gültig bis Ende des dritten Jahres nach dem Kauf. Ihre Daten nutzt der Salon nur für diesen Gutschein.</p>
+          <p className="text-xs text-dim">Zahlung per Karte über Stripe direkt an {salon.name}. Gültig bis Ende des dritten Jahres nach dem Kauf. Ihre Daten nutzt der Betrieb nur für diesen Gutschein.</p>
         </form>
       )}
     </main>

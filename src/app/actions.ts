@@ -18,6 +18,10 @@ export type BookInput = {
   phone: string;
   email: string;
   note: string;
+  /** Kennzeichen, Fahrzeugklasse (pkw/suv/transporter) und Fahrzeughinweis */
+  plate: string;
+  vehicleClass: string;
+  vehicleInfo?: string;
   /** honeypot, must stay empty */
   website?: string;
   /** consent to the cancellation terms, required when a deposit is due */
@@ -28,24 +32,26 @@ export type BookInput = {
 
 const MESSAGES: Record<string, string> = {
   slot_taken: "Diese Zeit wurde gerade vergeben. Bitte eine andere wählen.",
-  closed: "Zu dieser Zeit ist der Salon geschlossen.",
+  closed: "Zu dieser Zeit ist die Werkstatt geschlossen.",
   outside_window: "Diese Zeit kann nicht mehr online gebucht werden.",
   invalid_name: "Bitte den vollständigen Namen eintragen.",
   invalid_phone: "Bitte eine gültige Telefonnummer eintragen.",
   invalid_email: "Die E-Mail-Adresse sieht nicht richtig aus.",
   invalid_time: "Ungültige Uhrzeit.",
   service_not_found: "Diese Leistung gibt es nicht mehr.",
-  salon_not_found: "Salon nicht gefunden.",
-  too_many: "Mit dieser Telefonnummer sind schon 3 Termine offen. Für weitere Termine bitte im Salon anrufen.",
+  salon_not_found: "Werkstatt nicht gefunden.",
+  too_many: "Mit dieser Telefonnummer sind schon 3 Termine offen. Für weitere Termine bitte in der Werkstatt anrufen.",
   rate_limited: "Gerade gehen sehr viele Buchungen ein. Bitte in ein paar Minuten erneut versuchen.",
   too_fast: "Bitte kurz warten und dann erneut auf „Buchen“ tippen.",
-  not_bookable: "Online-Buchung ist hier gerade nicht möglich. Bitte im Salon anrufen.",
+  not_bookable: "Online-Buchung ist hier gerade nicht möglich. Bitte in der Werkstatt anrufen.",
+  invalid_plate: "Bitte ein gültiges Kennzeichen eintragen, z. B. MA-AB 123.",
+  invalid_vehicle: "Ungültige Fahrzeugklasse.",
   email_required: "Für die Anzahlung bitte eine E-Mail-Adresse angeben.",
 };
 
 type RefundInfo = { id: string; payment_intent: string | null; account: string | null; refundable: boolean; session: string | null; pending: boolean };
 
-/** Stripe Checkout for the deposit, on the salon's own Stripe account. Releases the hold if that fails. */
+/** Stripe Checkout for the deposit, on the workshop's own Stripe account. Releases the hold if that fails. */
 async function depositCheckout(b: Booked & { id: string }, email: string) {
   try {
     if (!stripeReady()) throw new Error("stripe not configured");
@@ -69,7 +75,7 @@ async function depositCheckout(b: Booked & { id: string }, email: string) {
         ],
         metadata: { appointment_id: b.id, terms_accepted_at: new Date().toISOString() },
         custom_text: {
-          submit: { message: "Absage bis 24 Stunden vorher: Anzahlung wird erstattet. Danach oder bei Nichterscheinen behält der Salon sie als Ausfallpauschale." },
+          submit: { message: "Absage bis 24 Stunden vorher: Anzahlung wird erstattet. Danach oder bei Nichterscheinen behält die Werkstatt sie als Ausfallpauschale." },
         },
         payment_intent_data: { metadata: { appointment_id: b.id } },
         expires_at: Math.floor(Date.now() / 1000) + 31 * 60,
@@ -91,7 +97,7 @@ export async function bookAction(
   input: BookInput,
 ): Promise<{ ok: true; booking: Booked; checkoutUrl?: string } | { ok: false; code: string; message: string }> {
   // simple bot protection: hidden field filled or form sent within 3 seconds
-  if (input.website) return { ok: false, code: "error", message: "Buchung fehlgeschlagen. Bitte im Salon anrufen." };
+  if (input.website) return { ok: false, code: "error", message: "Buchung fehlgeschlagen. Bitte in der Werkstatt anrufen." };
   if (typeof input.elapsedMs === "number" && input.elapsedMs < 3000) return { ok: false, code: "too_fast", message: MESSAGES.too_fast };
   const serviceIds = (Array.isArray(input.serviceIds) ? input.serviceIds : []).map(String).slice(0, 4);
   if (!serviceIds.length) return { ok: false, code: "service_not_found", message: MESSAGES.service_not_found };
@@ -104,11 +110,14 @@ export async function bookAction(
     p_phone: String(input.phone ?? "").slice(0, 40),
     p_email: String(input.email ?? "").slice(0, 200),
     p_note: String(input.note ?? "").slice(0, 500),
+    p_plate: String(input.plate ?? "").slice(0, 20),
+    p_class: String(input.vehicleClass ?? "pkw").slice(0, 20),
+    p_vehicle: String(input.vehicleInfo ?? "").slice(0, 120),
   });
   if (error) {
     const code = Object.keys(MESSAGES).find((k) => error.message.includes(k)) ?? "error";
     if (code === "error") console.error("booking failed", error);
-    return { ok: false, code, message: MESSAGES[code] ?? "Buchung fehlgeschlagen. Bitte erneut versuchen oder im Salon anrufen." };
+    return { ok: false, code, message: MESSAGES[code] ?? "Buchung fehlgeschlagen. Bitte erneut versuchen oder in der Werkstatt anrufen." };
   }
   const booking = data as Booked & { id: string };
   if (booking.deposit_cents && !input.acceptedTerms) {
@@ -118,7 +127,7 @@ export async function bookAction(
   if (booking.deposit_cents) {
     // confirmation mails follow once the deposit is paid (webhook)
     const checkoutUrl = await depositCheckout(booking, input.email.trim());
-    if (!checkoutUrl) return { ok: false, code: "error", message: "Die Anzahlung kann gerade nicht gestartet werden. Bitte später erneut versuchen oder im Salon anrufen." };
+    if (!checkoutUrl) return { ok: false, code: "error", message: "Die Anzahlung kann gerade nicht gestartet werden. Bitte später erneut versuchen oder in der Werkstatt anrufen." };
     return { ok: true, booking, checkoutUrl };
   }
   await Promise.all([
@@ -207,8 +216,8 @@ export async function rescheduleSlotsAction(token: string, day: string) {
 const MOVE_MESSAGES: Record<string, string> = {
   slot_taken: "Diese Zeit wurde gerade vergeben. Bitte eine andere wählen.",
   too_late: "Online verschieben geht nur bis 2 Stunden vor dem Termin.",
-  too_often: "Der Termin wurde schon dreimal verschoben. Bitte rufen Sie den Salon an.",
-  closed: "Zu dieser Zeit ist der Salon geschlossen.",
+  too_often: "Der Termin wurde schon dreimal verschoben. Bitte rufen Sie den Betrieb an.",
+  closed: "Zu dieser Zeit ist die Werkstatt geschlossen.",
   outside_window: "Diese Zeit liegt außerhalb des Buchungszeitraums.",
 };
 
@@ -218,7 +227,7 @@ export async function rescheduleAction(token: string, start: string) {
   if (error) {
     const code = Object.keys(MOVE_MESSAGES).find((k) => error.message.includes(k));
     if (!code) console.error("reschedule failed", error);
-    return { ok: false as const, error: code ? MOVE_MESSAGES[code] : "Verschieben hat nicht geklappt. Bitte im Salon anrufen." };
+    return { ok: false as const, error: code ? MOVE_MESSAGES[code] : "Verschieben hat nicht geklappt. Bitte in der Werkstatt anrufen." };
   }
   await sendRescheduleMails(data as Rescheduled);
   return { ok: true as const };

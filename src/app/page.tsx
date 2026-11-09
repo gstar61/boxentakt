@@ -40,24 +40,24 @@ export const metadata: Metadata = {
 
 /** Recurring complaints about booking marketplaces (trade press, reviews, salon forums) and how Boxentakt answers them. */
 const PROBLEMS = [
-  { icon: Percent, pain: "„35 % vom ersten Termin gehen an die Plattform.“", fix: "Keine Provision. Ein fester Preis, egal wie viele Neukunden kommen." },
-  { icon: UserCheck, pain: "„Meine Stammkundin wurde als Neukundin abgerechnet.“", fix: "Es gibt keine Neukunden-Einstufung, also nichts nachzuprüfen oder zu reklamieren." },
+  { icon: Percent, pain: "„Vermittlungsportale kassieren Provision auf jeden Neukunden.“", fix: "Keine Provision. Ein fester Preis, egal wie viele Neukunden kommen." },
+  { icon: UserCheck, pain: "„Mein Stammkunde wurde als Neukunde abgerechnet.“", fix: "Es gibt keine Neukunden-Einstufung, also nichts nachzuprüfen oder zu reklamieren." },
   { icon: LockOpen, pain: "„Neue Gebühren – sonst ist der Kalender weg.“", fix: "Monatlich kündbar, Preisänderungen 30 Tage vorher, Kundendaten jederzeit als Export." },
   { icon: LifeBuoy, pain: "„Support gibt es nur im Chat oder gegen Aufpreis.“", fix: "Persönlicher Support per E-Mail ist im Preis enthalten." },
-  { icon: CalendarX2, pain: "„Samstag 10 Uhr, der Stuhl bleibt leer.“", fix: "Erinnerung am Vortag, Absage-Link gibt den Termin frei, auf Wunsch Anzahlung." },
-  { icon: PhoneOff, pain: "„Das Telefon klingelt mitten im Färben.“", fix: "Online-Buchung rund um die Uhr, dazu ein QR-Code für Tresen und Schaufenster." },
+  { icon: CalendarX2, pain: "„Samstag früh, die Hebebühne bleibt leer.“", fix: "Erinnerung am Vortag, Absage-Link gibt den Termin frei, auf Wunsch Anzahlung." },
+  { icon: PhoneOff, pain: "„Das Telefon klingelt mitten im Räderwechsel.“", fix: "Online-Buchung rund um die Uhr, dazu ein QR-Code für Tresen und Schaufenster." },
 ];
 
 const STEPS = [
-  { icon: Store, title: "Salon anlegen", text: "Leistungen, Preise, Team und Öffnungszeiten eintragen. Dauert rund zwei Minuten." },
+  { icon: Store, title: "Betrieb anlegen", text: "Leistungen, Preise, Team und Öffnungszeiten eintragen. Dauert rund zwei Minuten." },
   { icon: Link2, title: "Link teilen", text: "Ins Google-Profil, in die Instagram-Bio und als QR-Code an den Empfang." },
-  { icon: CalendarCheck2, title: "Termine kommen rein", text: "Gebucht wird direkt in Ihren Kalender. Sie bekommen eine Mail, die Kundin eine Bestätigung." },
+  { icon: CalendarCheck2, title: "Termine kommen rein", text: "Gebucht wird direkt in Ihren Kalender. Sie bekommen eine Mail, der Kunde eine Bestätigung." },
 ];
 
 const MORE = [
-  { icon: CalendarDays, title: "Kalender pro Mitarbeiter", text: "Tag und Woche, Termine per Klick eintragen, verschieben oder absagen." },
-  { icon: Layers, title: "Mehrere Leistungen pro Termin", text: "Schnitt und Farbe in einer Buchung. Dauer und Preis werden automatisch zusammengerechnet." },
-  { icon: BadgeEuro, title: "Preise je Mitarbeiter", text: "Die Meisterin kostet mehr als die Junior-Stylistin? Pro Person ein eigener Preis." },
+  { icon: CalendarDays, title: "Kalender pro Mitarbeiter und Platz", text: "Tag und Woche, Termine per Klick eintragen, verschieben oder absagen." },
+  { icon: Layers, title: "Mehrere Leistungen pro Termin", text: "Räderwechsel und Bremsencheck in einer Buchung. Dauer und Preis werden automatisch zusammengerechnet." },
+  { icon: BadgeEuro, title: "Fahrzeug und Kennzeichen", text: "Kunden geben Kennzeichen und Fahrzeugklasse an. Für SUV und Transporter planen Sie mehr Zeit und einen Zuschlag ein." },
   { icon: TreePalm, title: "Feiertage & Urlaub", text: "Feiertage Ihres Bundeslands sind automatisch zu, Urlaub und Sondertage mit zwei Klicks." },
   { icon: BellRing, title: "Push aufs Handy", text: "Jede neue Online-Buchung meldet sich sofort auf den Handys im Team, auch ohne App-Store." },
   { icon: ListPlus, title: "Warteliste", text: "Ausgebucht? Kunden tragen sich ein und bekommen eine Mail, sobald ein Termin frei wird." },
@@ -68,14 +68,14 @@ const MORE = [
 
 const FAQ: [string, string][] = [
   ["Brauchen meine Kunden ein Konto?", "Nein. Kunden wählen Leistung und Uhrzeit, tragen Name und Telefon ein – fertig."],
-  ["Wie finden Neukunden meine Buchungsseite?", "Über den Buchungslink im Google-Unternehmensprofil, in der Instagram-Bio, auf Ihrer Webseite und über den QR-Code im Salon."],
+  ["Wie finden Neukunden meine Buchungsseite?", "Über den Buchungslink im Google-Unternehmensprofil, in der Instagram-Bio, auf Ihrer Webseite und über den QR-Code im Betrieb."],
   ["Kann ich weiter Termine am Telefon annehmen?", "Ja. Telefon- und Laufkundschaft tragen Sie mit zwei Klicks in denselben Kalender ein."],
   ["Was kostet Boxentakt?", "Die ersten 30 Tage sind kostenlos, ohne Kreditkarte. Danach 29 € im Monat, monatlich kündbar, oder 290 € im Jahr (zwei Monate gratis). Keine Provision, keine Umsatzsteuer."],
   ["Kann ich eine Anzahlung verlangen?", "Ja. Sie verbinden Ihr eigenes Stripe-Konto und legen einen Prozentsatz fest. Kunden stimmen vor der Zahlung einer klaren Ausfallregel zu. Bei Absage bis 24 Stunden vorher wird automatisch erstattet."],
-  ["Kann ich mit dem Handy Kartenzahlungen annehmen?", "Ja, per QR-Code: Sie tippen den Betrag ein, die Kundin scannt und zahlt mit Apple Pay, Google Pay oder Karte auf ihrem eigenen Handy. Das Geld geht direkt auf Ihr Stripe-Konto. Eine Registrierkasse mit TSE ersetzt das nicht."],
+  ["Kann ich mit dem Handy Kartenzahlungen annehmen?", "Ja, per QR-Code: Sie tippen den Betrag ein, der Kunde scannt und zahlt mit Apple Pay, Google Pay oder Karte auf ihrem eigenen Handy. Das Geld geht direkt auf Ihr Stripe-Konto. Eine Registrierkasse mit TSE ersetzt das nicht."],
   ["Wie komme ich wieder raus?", "Monatlich kündbar, ohne Mindestlaufzeit. Ihre Kundenkartei laden Sie jederzeit als Excel-Datei herunter."],
-  ["Kann ich Gutscheine verkaufen?", "Ja. Kunden kaufen sie online auf Ihrer Buchungsseite, das Geld geht direkt auf Ihr Stripe-Konto. Gutscheine aus dem Salon tragen Sie selbst ein. Eingelöst wird per Code, auch in Teilbeträgen."],
-  ["Haben meine Mitarbeiter unterschiedliche Preise?", "Kein Problem. Pro Leistung können Sie für jede Person einen eigenen Preis festlegen. Kunden sehen den passenden Preis, sobald sie jemanden auswählen."],
+  ["Kann ich Gutscheine verkaufen?", "Ja. Kunden kaufen sie online auf Ihrer Buchungsseite, das Geld geht direkt auf Ihr Stripe-Konto. Gutscheine aus dem Betrieb tragen Sie selbst ein. Eingelöst wird per Code, auch in Teilbeträgen."],
+  ["Gibt es Zuschläge für SUV und Transporter?", "Ja. Für Pkw, SUV und Transporter legen Sie Zuschlag in Minuten und Euro fest. Kunden wählen die Fahrzeugklasse bei der Buchung, der Kalender plant die passende Zeit ein."],
   ["Was passiert, wenn ich nach dem Test kein Abo abschließe?", "Die Buchungsseite nimmt keine Termine mehr an, Ihre Daten bleiben noch 90 Tage erhalten. Vor der Löschung erinnern wir Sie mehrmals per E-Mail. Mit einem Abo geht es jederzeit nahtlos weiter."],
   ["Wo liegen die Daten?", "In einer Datenbank in Frankfurt am Main. Impressum und Datenschutzerklärung für Ihre Buchungsseite sind vorbereitet."],
 ];
@@ -114,7 +114,7 @@ export default async function Home() {
           <div className="relative mx-auto grid max-w-6xl items-center gap-16 px-4 pt-16 pb-20 sm:px-6 lg:grid-cols-[1fr_1.05fr] lg:pt-24">
             <div className="grid gap-7 [animation:rise_.6s_ease-out_both]">
               <span className="flex w-fit items-center gap-2 rounded-full border border-line-2 bg-card/60 px-3 py-1 text-xs text-muted">
-                <span className="size-1.5 rounded-full bg-accent" /> Für Friseur- und Beautysalons
+                <span className="size-1.5 rounded-full bg-accent" /> Für Werkstätten und Autohäuser
               </span>
               <h1 className="text-5xl leading-[1.04] font-semibold tracking-tight sm:text-6xl lg:text-[4.4rem]">
                 Online-Termine.
@@ -160,9 +160,9 @@ export default async function Home() {
         <section id="warum" className="scroll-mt-16 bg-card-2/60">
           <div className="mx-auto grid max-w-6xl gap-10 px-4 py-24 sm:px-6">
             <div className="grid max-w-2xl gap-3">
-              <span className="label">Was Salons an Buchungsplattformen stört</span>
+              <span className="label">Was Betriebe an Buchungsplattformen stört</span>
               <h2 className="text-3xl font-semibold sm:text-4xl">Die häufigsten Klagen. Und was wir anders machen.</h2>
-              <p className="text-muted">Zusammengetragen aus Fachpresse, Bewertungsportalen und Salon-Foren.</p>
+              <p className="text-muted">Zusammengetragen aus Fachpresse, Bewertungsportalen und Werkstatt-Foren.</p>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {PROBLEMS.map(({ icon: Icon, pain, fix }) => (
@@ -201,9 +201,9 @@ export default async function Home() {
           <div className="mx-auto grid max-w-6xl gap-28 px-4 py-24 sm:px-6">
             <Showcase
               label="Buchungsseite"
-              title="Ihr Salon, rund um die Uhr buchbar."
+              title="Ihr Betrieb, rund um die Uhr buchbar."
               text="Eine eigene Seite mit Ihrem Namen, Ihren Leistungen und Preisen. Kunden sehen nur echte freie Zeiten, buchen in unter einer Minute und brauchen kein Konto."
-              points={["Freie Zeiten pro Mitarbeiter oder „egal, wer frei ist“", "Mehrere Leistungen in einer Buchung, z. B. Schnitt und Farbe", "Bestätigung mit Absage-Link per E-Mail", "Link und QR-Code für Google, Instagram und Tresen"]}
+              points={["Freie Zeiten pro Mitarbeiter oder „egal, wer frei ist“", "Mehrere Leistungen in einer Buchung, z. B. Räderwechsel und Bremsencheck", "Bestätigung mit Absage-Link per E-Mail", "Link und QR-Code für Google, Instagram und Tresen"]}
               visual={<PhoneBooking />}
             />
             <Showcase
@@ -217,7 +217,7 @@ export default async function Home() {
             <Showcase
               label="Kassieren"
               title="Kartenzahlung ohne Kartenterminal."
-              text="Betrag eintippen, QR-Code zeigen. Die Kundin scannt mit ihrem Handy und zahlt mit Apple Pay, Google Pay oder Karte. Das Geld geht direkt auf Ihr Konto."
+              text="Betrag eintippen, QR-Code zeigen. Der Kunde scannt mit seinem Handy und zahlt mit Apple Pay, Google Pay oder Karte. Das Geld geht direkt auf Ihr Konto."
               points={["Kein Gerät, keine Miete, keine Vertragsbindung", "Zahlungsstatus live, Tagesübersicht inklusive", "Beleg per E-Mail von Stripe"]}
               visual={
                 <div className="relative flex items-end justify-center gap-4">
@@ -230,8 +230,8 @@ export default async function Home() {
               reverse
               label="Gutscheine"
               title="Geschenke verkaufen, während Sie schneiden."
-              text="Kunden kaufen Gutscheine direkt auf Ihrer Buchungsseite, bezahlen online und bekommen sie sofort per Mail zum Ausdrucken. Im Salon prüfen und lösen Sie mit dem Code ein, auch in Teilbeträgen."
-              points={["Geld kommt direkt auf Ihr Stripe-Konto", "Restwert wird automatisch mitgeführt", "Auch für Gutscheine, die Sie im Salon bar verkaufen"]}
+              text="Kunden kaufen Gutscheine direkt auf Ihrer Buchungsseite, bezahlen online und bekommen sie sofort per Mail zum Ausdrucken. Im Betrieb prüfen und lösen Sie mit dem Code ein, auch in Teilbeträgen."
+              points={["Geld kommt direkt auf Ihr Stripe-Konto", "Restwert wird automatisch mitgeführt", "Auch für Gutscheine, die Sie im Betrieb bar verkaufen"]}
               visual={<VoucherStack />}
             />
             <Showcase
@@ -267,11 +267,11 @@ export default async function Home() {
               <span className="label">Rechner</span>
               <h2 className="text-3xl font-semibold sm:text-4xl">Was die Provision Sie im Jahr kostet.</h2>
               <p className="text-muted">
-                Marktplätze verdienen an jedem Neukunden mit, oft auch dann, wenn die Kundin Sie selbst über Google gefunden hat. Schieben Sie die Regler auf
+                Vermittlungsportale verdienen an jedem Neukunden mit, oft auch dann, wenn der Kunde Sie selbst über Google gefunden hat. Schieben Sie die Regler auf
                 Ihre Zahlen.
               </p>
               <ul className="grid gap-2 text-sm text-muted">
-                {["Kein Marktplatz neben der Konkurrenz", "Kundendaten gehören Ihnen", "Fester Preis statt Provision"].map((t) => (
+                {["Kein Portal neben der Konkurrenz", "Kundendaten gehören Ihnen", "Fester Preis statt Provision"].map((t) => (
                   <li key={t} className="flex items-center gap-2"><Check size={16} className="text-accent" /> {t}</li>
                 ))}
               </ul>
@@ -345,8 +345,8 @@ export default async function Home() {
           <div className="relative mx-auto grid max-w-6xl justify-items-center gap-6 overflow-hidden rounded-[28px] border border-line bg-card px-6 py-16 text-center">
             <div aria-hidden className="pointer-events-none absolute -top-32 h-72 w-[680px] max-w-full rounded-full bg-accent/15 blur-[100px]" />
             <h2 className="relative max-w-2xl text-3xl font-semibold sm:text-4xl">Ihr nächster Neukunde gehört Ihnen. Zu 100 %.</h2>
-            <p className="relative max-w-xl text-muted">Salon in zwei Minuten anlegen, Link teilen, Termine bekommen. 30 Tage kostenlos, keine Kreditkarte.</p>
-            <Link href="/registrieren" className="btn btn-primary relative">Jetzt Salon anlegen <ArrowRight size={18} /></Link>
+            <p className="relative max-w-xl text-muted">Betrieb in zwei Minuten anlegen, Link teilen, Termine bekommen. 30 Tage kostenlos, keine Kreditkarte.</p>
+            <Link href="/registrieren" className="btn btn-primary relative">Jetzt Betrieb anlegen <ArrowRight size={18} /></Link>
           </div>
         </section>
       </main>
@@ -355,7 +355,7 @@ export default async function Home() {
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 text-sm sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
           <div className="grid content-start gap-3">
             <span className="flex items-center gap-2 font-semibold"><LogoMark size={15} className="text-accent" /> Boxentakt</span>
-            <p className="max-w-xs text-muted"><span className="text-fg">{SLOGAN}</span> Online-Termine, Kalender und Kartenzahlung für Friseursalons.</p>
+            <p className="max-w-xs text-muted"><span className="text-fg">{SLOGAN}</span> Online-Termine, Kalender und Kartenzahlung für Werkstätten.</p>
           </div>
           <div className="grid content-start gap-2 text-muted">
             <span className="label mb-1">Produkt</span>
@@ -454,7 +454,7 @@ function CalendarPreview() {
         <span className="grid size-9 place-items-center rounded-xl bg-accent/12 text-accent"><BellRing size={16} /></span>
         <div className="text-sm">
           <div className="font-medium">Neue Online-Buchung</div>
-          <div className="text-xs text-muted">Herren · Schneiden & Bart, 14:30</div>
+          <div className="text-xs text-muted">Räderwechsel, MA-AB 123, 14:30</div>
         </div>
       </div>
     </div>

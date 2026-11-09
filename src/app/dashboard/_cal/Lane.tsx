@@ -85,7 +85,7 @@ export function Lane(props: {
           <button
             key={a.id}
             onClick={() => props.onOpenAppt(a.id)}
-            title={`${hm(startMin)} ${a.customer?.name ?? ""} · ${a.service_name}`}
+            title={`${hm(startMin)} ${a.license_plate ? a.license_plate + " · " : ""}${a.customer?.name ?? ""} · ${a.service_name}`}
             className={`absolute z-[3] grid content-start gap-px overflow-hidden rounded-[10px] border text-left transition hover:-translate-y-px ${props.compact ? "inset-x-0.5 px-1.5 py-1" : "inset-x-1.5 px-2.5 py-1.5"} ${tone}`}
             style={{ top: (startMin - range[0]) * px + 1, height: ht }}
           >
@@ -93,7 +93,7 @@ export function Lane(props: {
               // short slots: time and name on one line so the name stays readable
               <span className={`flex items-baseline gap-1.5 truncate ${props.compact ? "text-xs" : "text-[13px]"}`}>
                 <span className="t shrink-0 font-mono text-[11px]">{hm(startMin)}</span>
-                <span className="truncate font-semibold">{a.customer?.name ?? "–"}</span>
+                <span className="truncate font-semibold">{a.license_plate ?? a.customer?.name ?? "–"}</span>
                 {!props.compact && <span className="truncate text-xs text-muted">{a.service_name}</span>}
               </span>
             ) : (
@@ -102,7 +102,8 @@ export function Lane(props: {
                   {hm(startMin)}
                   {!props.compact && `–${hm(startMin + len)}${a.source === "online" ? " · online" : ""}`}
                 </span>
-                <span className={`truncate font-semibold ${props.compact ? "text-xs" : "text-[13px]"}`}>{a.customer?.name ?? "–"}</span>
+                <span className={`truncate font-semibold ${props.compact ? "text-xs" : "text-[13px]"}`}>{a.license_plate ?? a.customer?.name ?? "–"}</span>
+                {!props.compact && ht > 44 && a.license_plate && <span className="truncate text-xs text-muted">{a.customer?.name}</span>}
                 {!props.compact && ht > 58 && <span className="truncate text-xs text-muted">{a.service_name}</span>}
               </>
             )}

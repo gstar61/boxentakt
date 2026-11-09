@@ -42,7 +42,7 @@ export function BookingLink({ slug, name }: { slug: string; name: string }) {
       </div>
       {google && (
         <ol className="grid max-w-xl list-decimal gap-1.5 rounded-xl border border-line bg-card-2 py-3 pr-4 pl-8 text-sm text-muted">
-          <li>Bei Google nach dem eigenen Salon suchen (angemeldet mit dem Konto des Unternehmensprofils) oder <span className="text-fg">business.google.com</span> öffnen.</li>
+          <li>Bei Google nach dem eigenen Betrieb suchen (angemeldet mit dem Konto des Unternehmensprofils) oder <span className="text-fg">business.google.com</span> öffnen.</li>
           <li>„Profil bearbeiten“ → Reiter „Buchungen“ bzw. „Links für Terminvereinbarung“.</li>
           <li>Den Buchungslink oben einfügen und speichern. Bei mehreren Links diesen als bevorzugt festlegen.</li>
           <li>Nach Prüfung durch Google erscheint im Profil und in Maps ein Knopf „Termin buchen“, meist innerhalb weniger Tage.</li>
@@ -52,7 +52,7 @@ export function BookingLink({ slug, name }: { slug: string; name: string }) {
         <div className="flex flex-wrap items-end gap-4">
           <div className="w-44 rounded-xl bg-white p-2" role="img" aria-label={`QR-Code zur Buchungsseite von ${name}`} dangerouslySetInnerHTML={{ __html: svg }} />
           <div className="grid gap-2 text-sm text-muted">
-            <p className="max-w-xs">Zum Ausdrucken für Empfangstresen, Schaufenster oder Visitenkarte. Kundinnen scannen und buchen direkt.</p>
+            <p className="max-w-xs">Zum Ausdrucken für Empfangstresen, Schaufenster oder Visitenkarte. Kunden scannen und buchen direkt.</p>
             <button className="btn btn-sm w-fit" onClick={downloadPng}><Download size={15} /> Als Bild speichern</button>
           </div>
         </div>

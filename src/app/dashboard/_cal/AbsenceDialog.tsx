@@ -60,7 +60,7 @@ export function AbsenceDialog(props: {
   return (
     <Drawer onClose={props.onClose} title="Abwesenheit eintragen" eyebrow="Urlaub, Krankheit, Fortbildung">
       <form onSubmit={save} className="grid gap-3.5" noValidate>
-        <Select id="ab-who" label="Wer" value={who} onChange={setWho} options={[["salon", "Ganzer Salon"], ...props.staff.map((s) => [s.id, s.name] as [string, string])]} />
+        <Select id="ab-who" label="Wer" value={who} onChange={setWho} options={[["salon", "Ganzer Betrieb"], ...props.staff.map((s) => [s.id, s.name] as [string, string])]} />
         <label className="flex cursor-pointer items-center gap-2 text-sm">
           <input type="checkbox" className="size-4 accent-accent" checked={allDay} onChange={(e) => setAllDay(e.target.checked)} />
           Ganztägig

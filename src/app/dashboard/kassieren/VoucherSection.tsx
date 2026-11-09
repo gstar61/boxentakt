@@ -97,7 +97,7 @@ export function VoucherSection({ paymentsReady }: { paymentsReady: boolean | nul
     <section className="card grid max-w-xl gap-5 p-5 sm:p-6">
       <div className="grid gap-1">
         <h2 className="flex items-center gap-2 text-[15px] font-semibold"><Gift size={16} /> Gutscheine</h2>
-        <p className="text-sm text-muted">Online verkaufen, im Salon ausstellen und beim Bezahlen einlösen – auch in Teilbeträgen.</p>
+        <p className="text-sm text-muted">Online verkaufen, im Betrieb ausstellen und beim Bezahlen einlösen – auch in Teilbeträgen.</p>
       </div>
 
       {role === "owner" && (
@@ -139,7 +139,7 @@ export function VoucherSection({ paymentsReady }: { paymentsReady: boolean | nul
       )}
 
       <form onSubmit={issue} className="grid gap-2">
-        <span className="text-[13px] text-muted">Gutschein im Salon ausstellen (z. B. bar bezahlt)</span>
+        <span className="text-[13px] text-muted">Gutschein im Betrieb ausstellen (z. B. bar bezahlt)</span>
         <div className="flex flex-wrap gap-2">
           <input aria-label="Betrag in Euro" inputMode="decimal" className="input input-sm w-28 tabular-nums" placeholder="Betrag €" value={issueAmount} onChange={(e) => setIssueAmount(e.target.value)} />
           <input aria-label="Für wen (optional)" className="input input-sm min-w-0 flex-1" placeholder="Für wen? (optional)" value={issueFor} onChange={(e) => setIssueFor(e.target.value)} />
@@ -156,7 +156,7 @@ export function VoucherSection({ paymentsReady }: { paymentsReady: boolean | nul
             <div key={v.id} className="flex items-center justify-between gap-3 rounded-xl border border-line px-3 py-2 text-sm">
               <span className="min-w-0">
                 <span className="font-mono font-medium">{v.code}</span>
-                <span className="text-muted"> · {v.source === "online" ? `online${v.buyer_name ? `, ${v.buyer_name}` : ""}` : "im Salon"}{v.recipient_name ? ` · für ${v.recipient_name}` : ""}</span>
+                <span className="text-muted"> · {v.source === "online" ? `online${v.buyer_name ? `, ${v.buyer_name}` : ""}` : "im Betrieb"}{v.recipient_name ? ` · für ${v.recipient_name}` : ""}</span>
               </span>
               <span className="flex shrink-0 items-center gap-2 tabular-nums">
                 <span className={v.balance_cents ? "" : "text-dim"}>{euro(v.balance_cents)}<span className="text-dim"> / {euro(v.amount_cents)}</span></span>

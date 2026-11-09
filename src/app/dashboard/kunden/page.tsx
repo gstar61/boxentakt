@@ -241,7 +241,7 @@ function CustomerDrawer(props: { customer: Customer; stats?: Stats; tz: string; 
         <TextField id="cu-phone" label="Telefon" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
         <TextField id="cu-mail" label="E-Mail" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
         <div className="grid gap-1.5">
-          <label htmlFor="cu-note" className="text-[13px] text-muted">Notiz (nur für den Salon, z. B. Farbrezeptur)</label>
+          <label htmlFor="cu-note" className="text-[13px] text-muted">Notiz (nur für den Betrieb, z. B. Reifenhersteller, Wunschtermin)</label>
           <textarea id="cu-note" className="input text-sm" maxLength={1000} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} />
         </div>
         {msg && <p role="status" className={`text-sm ${msg.err ? "text-danger" : "text-accent"}`}>{msg.text}</p>}

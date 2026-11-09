@@ -266,7 +266,7 @@ export default function CalendarPage() {
       )}
       {selectedAbsence && (
         <AbsenceDrawer absence={selectedAbsence} tz={tz}
-          staffName={selectedAbsence.staff_id ? staff.find((s) => s.id === selectedAbsence.staff_id)?.name ?? "" : "Ganzer Salon"}
+          staffName={selectedAbsence.staff_id ? staff.find((s) => s.id === selectedAbsence.staff_id)?.name ?? "" : "Ganzer Betrieb"}
           onClose={() => setOpen(null)} onDeleted={() => changed("Abwesenheit gelöscht")} />
       )}
       {open?.kind === "create" && (

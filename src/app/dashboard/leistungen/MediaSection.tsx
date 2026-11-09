@@ -106,7 +106,7 @@ export function MediaSection() {
           const has = Boolean(salon[SPEC[kind].column]);
           return (
             <div key={kind} className="grid gap-2">
-              <span className="text-[13px] text-muted">{kind === "logo" ? "Logo (quadratisch)" : "Titelbild (Querformat, z. B. Salon von innen)"}</span>
+              <span className="text-[13px] text-muted">{kind === "logo" ? "Logo (quadratisch)" : "Titelbild (Querformat, z. B. Werkstatt von innen)"}</span>
               <div className="flex flex-wrap gap-2">
                 <label className={`btn btn-sm ${busy ? "pointer-events-none opacity-50" : ""}`}>
                   <ImagePlus size={15} /> {busy === kind ? "Lädt hoch …" : has ? "Ersetzen" : "Hochladen"}

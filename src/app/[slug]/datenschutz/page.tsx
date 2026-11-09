@@ -35,7 +35,7 @@ export default async function Page(props: PageProps<"/[slug]/datenschutz">) {
       <section>
         <h2>Speicherdauer</h2>
         <p>
-          Wir speichern Ihre Daten, solange Sie Kundin oder Kunde bei uns sind. Auf Wunsch löschen wir sie jederzeit, soweit keine gesetzlichen
+          Wir speichern Ihre Daten, solange Sie Kunde bei uns sind. Auf Wunsch löschen wir sie jederzeit, soweit keine gesetzlichen
           Aufbewahrungspflichten entgegenstehen.
         </p>
       </section>
@@ -61,7 +61,7 @@ export default async function Page(props: PageProps<"/[slug]/datenschutz">) {
       </section>
       <section>
         <h2>Cookies</h2>
-        <p>Die Buchungsseite setzt keine Cookies. Nur für die Anmeldung des Salon-Teams werden technisch notwendige Cookies verwendet.</p>
+        <p>Die Buchungsseite setzt keine Cookies. Nur für die Anmeldung des Betriebsteams werden technisch notwendige Cookies verwendet.</p>
       </section>
       <section>
         <h2>Ihre Rechte</h2>

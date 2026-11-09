@@ -41,7 +41,7 @@ export default function CancelButton({ token, slug }: { token: string; slug: str
           <CalendarX2 size={18} /> Termin absagen
         </button>
       )}
-      {state === "error" && <p className="w-full text-sm text-danger">Absagen hat nicht geklappt. Bitte im Salon anrufen.</p>}
+      {state === "error" && <p className="w-full text-sm text-danger">Absagen hat nicht geklappt. Bitte im Betrieb anrufen.</p>}
     </div>
   );
 }

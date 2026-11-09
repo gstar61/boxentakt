@@ -10,7 +10,7 @@ const ERRORS: Record<string, string> = {
   slug_taken: "Diese Adresse ist schon vergeben. Bitte eine andere wählen.",
   invalid_name: "Bitte einen Salonnamen mit mindestens 2 Zeichen eintragen.",
   not_confirmed: "Bitte zuerst die E-Mail-Adresse bestätigen.",
-  too_many_salons: "Du hast bereits 3 Salons angelegt.",
+  too_many_salons: "Du hast bereits 3 Betriebe angelegt.",
 };
 
 /** Shown when a signed-in user has no salon yet. */
@@ -36,19 +36,19 @@ export function Onboarding(props: { email: string; meta: Record<string, string>;
     <div className="card grid max-w-xl gap-6 p-8">
       <span className="grid size-12 place-items-center rounded-2xl bg-accent/10 text-accent"><Store size={22} strokeWidth={1.75} /></span>
       <div className="grid gap-2">
-        <h1 className="text-2xl font-semibold">Salon anlegen</h1>
+        <h1 className="text-2xl font-semibold">Betrieb anlegen</h1>
         <p className="text-muted">
-          Mit {props.email} ist noch kein Salon verbunden. Lege jetzt deinen Salon an – Leistungen, Öffnungszeiten und Team passt du danach an.
-          Wenn du zu einem bestehenden Salon eingeladen wurdest, bitte die Inhaberin, dich mit genau dieser Adresse einzuladen.
+          Mit {props.email} ist noch kein Betrieb verbunden. Lege jetzt deinen Betrieb an – Leistungen, Öffnungszeiten und Team passt du danach an.
+          Wenn du zu einem bestehenden Betrieb eingeladen wurdest, bitte die Inhaberin oder den Inhaber, dich mit genau dieser Adresse einzuladen.
         </p>
       </div>
       <form onSubmit={create} className="grid gap-3.5" noValidate>
-        <TextField id="o-name" label="Name des Salons" value={name} onChange={setName} />
-        <TextField id="o-slug" label={`Adresse der Buchungsseite: …/${finalSlug || "dein-salon"}`} value={slug} onChange={(v) => setSlug(toSlug(v))} />
+        <TextField id="o-name" label="Name des Betriebs" value={name} onChange={setName} />
+        <TextField id="o-slug" label={`Adresse der Buchungsseite: …/${finalSlug || "deine-werkstatt"}`} value={slug} onChange={(v) => setSlug(toSlug(v))} />
         <TextField id="o-staff" label="Dein Vorname (erscheint im Kalender)" value={staff} onChange={setStaff} />
         {err && <p role="alert" className="text-sm text-danger">{err}</p>}
         <div>
-          <button className="btn btn-primary" disabled={busy}>{busy ? "Wird angelegt …" : "Salon anlegen"}</button>
+          <button className="btn btn-primary" disabled={busy}>{busy ? "Wird angelegt …" : "Betrieb anlegen"}</button>
         </div>
       </form>
     </div>

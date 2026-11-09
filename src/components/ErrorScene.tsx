@@ -5,34 +5,30 @@ import { RefreshCw } from "lucide-react";
 import { OPERATOR } from "@/lib/operator";
 
 const PUNS = [
-  "Diese Seite hat sich die Haare schneiden lassen – ein bisschen zu kurz.",
-  "Hier wurde etwas zu viel weggeschnitten.",
-  "Diese Adresse ist so kahl wie der Boden nach Feierabend.",
-  "Der Link hat Spliss. Wir empfehlen einen frischen Schnitt.",
-  "Gesucht, gekämmt, geföhnt – trotzdem nichts gefunden.",
-  "Diese Seite ist gerade beim Färben. Leider für immer.",
+  "Diese Seite ist in der Werkstatt. Leider schon seit Wochen.",
+  "Hier ist eine Schraube locker – und zwar die Adresse.",
+  "Reifen gewechselt, Seite vergessen.",
+  "Diese Adresse hat einen Platten.",
+  "Gesucht, gehoben, geprüft – nichts gefunden.",
+  "Die Seite ist zur HU gefahren und nicht bestanden.",
   "Kein Termin frei auf dieser Seite. Auf der Startseite schon.",
-  "Diese URL hat einen Bad Hair Day.",
-  "Wir haben jedes Haar umgedreht. Nichts.",
-  "Schnitt daneben – diese Seite gibt es nicht.",
+  "Hier fehlt das Kennzeichen. Und die Seite.",
+  "Wir haben jede Hebebühne angehoben. Nichts.",
+  "Sackgasse – diese Seite gibt es nicht.",
 ];
 
-/** Small animated scene: scissors snip through a big number, a few hairs fall. Static with reduced motion. */
-export function SnipScene({ label = "404" }: { label?: string }) {
+/** Small animated scene: a wheel rolls across a big number. Static with reduced motion. */
+export function WheelScene({ label = "404" }: { label?: string }) {
   const [pun, setPun] = useState(() => Math.floor(Math.random() * PUNS.length));
   return (
     <div className="grid justify-items-center gap-3">
-      <div className="snip relative h-28 w-60 select-none" aria-hidden>
-        <span className="snip-text absolute inset-0 grid place-items-center font-semibold tracking-tight text-fg/10 text-[88px] leading-none">{label}</span>
-        <svg className="snip-scissors absolute top-1/2 left-0 size-10 -translate-y-1/2 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="6" cy="6" r="3" />
-          <circle cx="6" cy="18" r="3" />
-          <path className="snip-blade-a" d="M8.12 8.12 20 20" />
-          <path className="snip-blade-b" d="M8.12 15.88 20 4" />
+      <div className="roll relative h-28 w-60 select-none" aria-hidden>
+        <span className="absolute inset-0 grid place-items-center font-semibold tracking-tight text-fg/10 text-[88px] leading-none">{label}</span>
+        <svg className="roll-wheel absolute top-1/2 left-0 size-10 -translate-y-1/2 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="2.5" />
+          <path d="M12 3v6.5M12 14.5V21M3 12h6.5M14.5 12H21" />
         </svg>
-        {[0, 1, 2, 3, 4].map((i) => (
-          <span key={i} className="snip-hair absolute top-1/2 h-3 w-px rounded-full bg-muted/60" style={{ left: `${30 + i * 14}%`, animationDelay: `${0.4 + i * 0.35}s` }} />
-        ))}
       </div>
       <p className="max-w-xs text-center text-[13px] text-muted">{PUNS[pun]}</p>
       <button type="button" onClick={() => setPun((p) => (p + 1 + Math.floor(Math.random() * (PUNS.length - 1))) % PUNS.length)} className="flex items-center gap-1.5 text-[13px] font-medium text-accent hover:underline">

@@ -8,16 +8,19 @@ Online-Terminbuchung + Kalender für Werkstätten (Reifen/Räderwechsel, freie K
 Start als Kopie des Codes von **Trimtable** (Friseur-Buchung, Repo `gstar61/Trimtable`). Trimtable bleibt unverändert und eigenständig. Boxentakt hat eigenes Repo, **eigenes Supabase-Projekt, eigenes Vercel-Projekt, eigene Stripe-Produkte und eigene Resend-Domain** – nichts davon mit Trimtable teilen. Migrationen niemals auf das Trimtable-Supabase-Projekt anwenden.
 
 ## Stand
-- Marke, Domain-Texte und Slogan sind auf Boxentakt umbenannt.
-- Fachlich ist der Code noch **Friseur** (Tabellen `salons`, `staff`, Texte „Salon“, Schere im 404, Haar-Sprüche, Gutscheine, Preise je Person). Das wird schrittweise zu Betrieb/Standort/Ressource/Fahrzeug umgebaut.
+- Marke, Domain-Texte und Slogan sind auf Boxentakt umbenannt; sichtbare Texte, Startwerte, Landingpage, SEO, 404-Seite (rollendes Rad) sind auf Werkstatt umgestellt.
+- **Fahrzeug** (Migration `0023_vehicles.sql`): `appointments.license_plate` (Pflicht online), `vehicle_class` (pkw/suv/transporter), `vehicle_info`; `salons.class_extra` = Zuschlag je Klasse in Minuten und Cent, verwaltet unter Einstellungen → Leistungen (`VehicleClassSection`). `book_services` hat dafür drei neue Parameter (`p_plate`, `p_class`, `p_vehicle`), der alte 8-Parameter-Aufruf und `book_appointment` entfallen.
+- Interne Namen (Tabellen `salons`, `staff`, RPCs `*_salon*`, Variablen `salon`) bleiben vorerst, damit Migrationen und Funktionen nicht brechen. Sichtbar heißt es Betrieb/Mitarbeiter.
+- Noch nicht gebaut: Termin belegt mehrere Ressourcen gleichzeitig (Mechaniker + Hebebühne), Standorte, Flotten-Sammeltermine, RadsatzPro-Anbindung. Ressourcen (z. B. „Hebebühne 1“) lassen sich bis dahin als eigene Zeile unter Team anlegen.
+- Migration 0023 ist noch nicht auf einer Datenbank ausgeführt (kein Supabase-Projekt angelegt).
 - Infrastruktur (Supabase, Vercel, Stripe, Resend, DNS) ist noch **nicht** angelegt. Env-Variablen siehe README.
 
 ## Geplanter Umbau
-1. Begriffe: Salon → Betrieb, Personal → Ressourcen (Mechaniker, Hebebühne, Wuchtmaschine); Termin kann mehrere Ressourcen belegen, Doppelbuchungs-Schutz je Ressource.
-2. Fahrzeug im Termin: Kennzeichen, Fahrzeugklasse (Dauer je Klasse), optional Reifengröße.
-3. Leistungskatalog Werkstatt (Räderwechsel mit/ohne Einlagerung, Öl, Inspektion, HU/AU, Bremsen, Batterie, Klima, Achsvermessung).
+1. Ressourcen: Termin kann mehrere Ressourcen belegen (Mechaniker, Hebebühne, Wuchtmaschine), Doppelbuchungs-Schutz je Ressource.
+2. Optional Reifengröße im Termin; Fahrzeugdaten in der Kundenkartei.
+3. Weitere Leistungen im Startkatalog (Batterie, Klima, Reifenreparatur).
 4. Standorte und Flotten-Sammeltermine.
-5. Friseur-Teile entfernen (Haar-Motive, Preise je Person, Friseur-Gutscheine).
+5. Gutscheine prüfen, ob für Werkstätten sinnvoll.
 6. Anbindung an RadsatzPro (nach dem eigenständigen Start): API-Schlüssel + Webhooks, RadsatzPro bleibt führend für Kunde/Fahrzeug/Radsatz, Boxentakt für Termine/Kapazität. Keine gemeinsame Datenbank.
 7. Google/SEO: Buchungslink im Unternehmensprofil, schema.org `AutoRepair`, Städteseiten.
 

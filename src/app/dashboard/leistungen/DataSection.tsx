@@ -31,7 +31,7 @@ export function DataSection() {
       <div className="grid gap-1">
         <h2 className="flex items-center gap-2 text-[15px] font-semibold"><ShieldCheck size={16} /> Daten &amp; Datenschutz</h2>
         <p className="text-sm text-muted">
-          Alles, was Boxentakt zu deinem Salon und Konto speichert, als Datei (JSON): Einstellungen, Team, Kunden, Termine, Gutscheine. Für Auskünfte nach
+          Alles, was Boxentakt zu deinem Betrieb und Konto speichert, als Datei (JSON): Einstellungen, Team, Kunden, Termine, Gutscheine. Für Auskünfte nach
           Art. 15 DSGVO oder einen Wechsel.
         </p>
       </div>
@@ -42,7 +42,7 @@ export function DataSection() {
         {msg && <span role="status" className={`text-sm ${msg.err ? "text-danger" : "text-accent"}`}>{msg.text}</span>}
       </div>
       <p className="text-sm text-muted">
-        Fragt eine Kundin, welche Daten du über sie speicherst? In der <Link href="/dashboard/kunden" className="text-accent underline underline-offset-2">Kundenkartei</Link> beim
+        Fragt ein Kunde, welche Daten du über ihn speicherst? In der <Link href="/dashboard/kunden" className="text-accent underline underline-offset-2">Kundenkartei</Link> beim
         Kunden auf „Auskunft“ tippen und die Datei weitergeben. Antwort spätestens innerhalb eines Monats.
       </p>
     </section>

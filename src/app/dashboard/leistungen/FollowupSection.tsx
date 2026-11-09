@@ -38,7 +38,7 @@ export function FollowupSection() {
       <div className="grid gap-1">
         <h2 className="text-[15px] font-semibold">Bewertungen &amp; Wiederkommen</h2>
         <p className="text-sm text-muted">
-          Automatische Mails an Kundinnen und Kunden mit E-Mail-Adresse. Jede Mail enthält einen Abmeldelink, auf der Buchungsseite steht ein Hinweis
+          Automatische Mails an Kunden mit E-Mail-Adresse. Jede Mail enthält einen Abmeldelink, auf der Buchungsseite steht ein Hinweis
           darauf.
         </p>
       </div>
@@ -47,7 +47,7 @@ export function FollowupSection() {
         <label htmlFor="review" className="flex items-center gap-2 text-[13px] text-muted"><Star size={14} /> Google-Bewertungslink</label>
         <input id="review" className="input input-sm" placeholder="https://g.page/r/…/review" value={url} onChange={(e) => setUrl(e.target.value)} />
         <p className="text-xs text-dim">
-          Im Google-Unternehmensprofil unter „Bewertungen anfordern“ kopieren. Ist ein Link eingetragen, bekommt jede Kundin am Tag nach ihrem ersten
+          Im Google-Unternehmensprofil unter „Bewertungen anfordern“ kopieren. Ist ein Link eingetragen, bekommt jeder Kunde am Tag nach seinem ersten
           Termin einmalig eine Bitte um Bewertung.
         </p>
       </div>
@@ -69,7 +69,7 @@ export function FollowupSection() {
             </div>
           ))}
         </div>
-        <p className="text-xs text-dim">Geht nur raus, wenn die Kundin noch keinen neuen Termin hat. Typisch: Herrenschnitt 4 Wochen, Farbe 6 Wochen.</p>
+        <p className="text-xs text-dim">Geht nur raus, wenn der Kunde noch keinen neuen Termin hat. Typisch: Räderwechsel 26 Wochen, Ölwechsel 52 Wochen.</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">

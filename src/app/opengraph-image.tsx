@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { SLOGAN } from "@/lib/brand";
 
-export const alt = "Boxentakt – Online-Termine für Friseursalons";
+export const alt = "Boxentakt – Online-Termine für Werkstätten";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

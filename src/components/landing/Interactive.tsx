@@ -9,19 +9,19 @@ const fmt = (n: number) => new Intl.NumberFormat("de-DE", { maximumFractionDigit
 /** What a commission marketplace would take per year compared with Boxentakt's flat price. */
 export function SavingsCalculator() {
   const [clients, setClients] = useState(15);
-  const [ticket, setTicket] = useState(55);
-  const [rate, setRate] = useState(35);
+  const [ticket, setTicket] = useState(120);
+  const [rate, setRate] = useState(20);
   const commission = clients * ticket * (rate / 100) * 12;
   const ours = 290;
   const saved = Math.max(0, commission - ours);
   return (
     <div className="card grid gap-6 p-6 sm:p-8">
-      <Slider label="Neukunden über die Plattform pro Monat" value={clients} min={0} max={60} step={1} onChange={setClients} display={`${clients}`} />
-      <Slider label="Durchschnittlicher erster Termin" value={ticket} min={20} max={200} step={5} onChange={setTicket} display={`${ticket} €`} />
+      <Slider label="Neukunden über ein Vermittlungsportal pro Monat" value={clients} min={0} max={60} step={1} onChange={setClients} display={`${clients}`} />
+      <Slider label="Durchschnittlicher erster Termin" value={ticket} min={30} max={400} step={5} onChange={setTicket} display={`${ticket} €`} />
       <div className="grid gap-2">
-        <span className="text-[13px] text-muted">Provision der Plattform</span>
+        <span className="text-[13px] text-muted">Provision des Portals</span>
         <div className="flex flex-wrap gap-2">
-          {[[35, "35 % (z. B. Treatwell)"], [20, "20 % (z. B. Fresha)"], [30, "30 % (z. B. Booksy Boost)"]].map(([r, l]) => (
+          {[[15, "15 %"], [20, "20 %"], [30, "30 %"]].map(([r, l]) => (
             <button key={r} type="button" className="pill" aria-pressed={rate === r} onClick={() => setRate(r as number)}>{l}</button>
           ))}
         </div>
@@ -31,7 +31,7 @@ export function SavingsCalculator() {
         <Figure label="Boxentakt pro Jahr" value={`${fmt(ours)} €`} muted />
         <Figure label="Bleibt bei Ihnen" value={`${fmt(saved)} €`} />
       </div>
-      <p className="text-xs text-dim">Ohne Grundgebühr der Plattform gerechnet. Boxentakt mit Jahresabo, keine Umsatzsteuer.</p>
+      <p className="text-xs text-dim">Ohne Grundgebühr des Portals gerechnet. Boxentakt mit Jahresabo, keine Umsatzsteuer.</p>
     </div>
   );
 }

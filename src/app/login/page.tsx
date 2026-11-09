@@ -54,7 +54,7 @@ export default function LoginPage() {
       </Link>
       <div className="grid gap-2">
         <h1 className="text-3xl font-semibold">{mode === "login" ? "Anmelden" : "Konto anlegen"}</h1>
-        <p className="text-muted">Für Salon-Inhaber und Team. Kunden buchen ohne Konto.</p>
+        <p className="text-muted">Für Betriebsinhaber und Team. Kunden buchen ohne Konto.</p>
       </div>
       <form onSubmit={submit} className="grid gap-4" noValidate>
         <Field id="email" label="E-Mail" type="email" autoComplete="email" value={email} onChange={setEmail} />
@@ -78,7 +78,7 @@ export default function LoginPage() {
         </div>
       </form>
       <p className="text-sm text-muted">
-        Neuer Salon? <Link href="/registrieren" className="text-fg underline underline-offset-4">Hier kostenlos registrieren</Link>
+        Neuer Betrieb? <Link href="/registrieren" className="text-fg underline underline-offset-4">Hier kostenlos registrieren</Link>
       </p>
     </main>
       </AuthCard>

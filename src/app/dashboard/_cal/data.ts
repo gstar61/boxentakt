@@ -14,6 +14,9 @@ export type Appt = {
   status: Status;
   source: "online" | "salon";
   note: string | null;
+  license_plate: string | null;
+  vehicle_class: "pkw" | "suv" | "transporter";
+  vehicle_info: string | null;
   deposit_cents: number | null;
   payment_status: "pending" | "paid" | "refunded" | "expired" | null;
   customer: { name: string; phone: string | null; email: string | null; note: string | null } | null;
@@ -37,7 +40,7 @@ export async function loadRange(salonId: string, from: Date, to: Date) {
   const [a, b] = await Promise.all([
     sb
       .from("appointments")
-      .select("id,staff_id,customer_id,service_id,service_name,price_cents,during,status,source,note,deposit_cents,payment_status,payment_expires_at,customers(name,phone,email,note)")
+      .select("id,staff_id,customer_id,service_id,service_name,price_cents,during,status,source,note,license_plate,vehicle_class,vehicle_info,deposit_cents,payment_status,payment_expires_at,customers(name,phone,email,note)")
       .eq("salon_id", salonId)
       .filter("during", "ov", range(from, to)),
     sb.from("absences").select("id,staff_id,during,reason").eq("salon_id", salonId).filter("during", "ov", range(from, to)),

@@ -113,7 +113,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="min-w-0">
               {salons.length > 1 && ctx ? (
                 <select
-                  aria-label="Salon wechseln"
+                  aria-label="Betrieb wechseln"
                   className="max-w-[220px] truncate bg-transparent font-semibold tracking-tight outline-none"
                   value={ctx.salon.id}
                   onChange={(e) => { setState("loading"); load(e.target.value); }}

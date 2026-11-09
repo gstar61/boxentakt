@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata(props: PageProps<"/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;
   const salon = await loadSalon(slug);
-  if (!salon) return { title: "Salon nicht gefunden" };
+  if (!salon) return { title: "Betrieb nicht gefunden" };
   const image = salon.cover_url ?? salon.logo_url;
   return {
     title: `Termin buchen – ${salon.name}`,

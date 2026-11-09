@@ -67,18 +67,18 @@ export default function RegisterPage() {
           <h1 className="text-3xl font-semibold">Fast geschafft</h1>
           <p className="text-muted">
             Wir haben eine E-Mail an <span className="text-fg">{email}</span> geschickt. Bitte den Link darin öffnen und dich danach anmelden – dann wird
-            dein Salon angelegt.
+            dein Betrieb angelegt.
           </p>
           <Link href="/login" className="btn btn-primary w-fit">Zur Anmeldung</Link>
         </div>
       ) : (
         <>
           <div className="grid gap-2">
-            <h1 className="text-3xl font-semibold">Salon anlegen</h1>
+            <h1 className="text-3xl font-semibold">Betrieb anlegen</h1>
             <p className="text-muted">30 Tage kostenlos testen, danach 29 € im Monat oder 290 € im Jahr. Keine Kreditkarte nötig.</p>
           </div>
           <form onSubmit={submit} className="grid gap-4" noValidate>
-            <Field id="salon" label="Name des Salons" value={salon} onChange={setSalon} placeholder="z. B. Studio Haarwerk" />
+            <Field id="salon" label="Name des Betriebs" value={salon} onChange={setSalon} placeholder="z. B. Autowerkstatt Meier" />
             <div className="grid gap-1.5">
               <label htmlFor="slug" className="text-[13px] text-muted">Adresse der Buchungsseite</label>
               <div className="flex items-center rounded-[14px] border border-line-2 bg-card-2 focus-within:border-accent">

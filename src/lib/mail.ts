@@ -28,7 +28,7 @@ export const appUrl = () =>
 type Mail = { html: string; text: string };
 const salon = (name: string, logo?: string | null): MailParts["brand"] => ({ kind: "salon", name, logo });
 const platform: MailParts["brand"] = { kind: "platform" };
-/** Salon logo by booking-page slug, cached for a few minutes (cron runs send many mails per salon). */
+/** Betrieb logo by booking-page slug, cached for a few minutes (cron runs send many mails per salon). */
 const logoCache = new Map<string, { at: number; logo: Promise<string | null> }>();
 function logoFor(slug: string) {
   const hit = logoCache.get(slug);
@@ -82,6 +82,7 @@ export type Booked = {
   salon_logo?: string | null;
   /** paid deposit (Anzahlung) in cents, if any */
   deposit_cents?: number | null;
+  license_plate?: string | null;
 };
 
 const contact = (address: string | null, phone: string | null) =>
@@ -92,6 +93,7 @@ export async function sendBookingMails(b: Booked, customer: { name: string; emai
   const cancelUrl = `${appUrl()}/storno/${b.cancel_token}`;
   const rows: [string, string][] = [
     ["Termin", when],
+    ...(b.license_plate ? [["Kennzeichen", b.license_plate] as [string, string]] : []),
     ["Leistung", b.service_name],
     ["Bei", b.staff_name],
     ["Preis", euro(b.price_cents)],
@@ -100,7 +102,7 @@ export async function sendBookingMails(b: Booked, customer: { name: string; emai
   const jobs: Promise<unknown>[] = [];
   if (customer.email) {
     const refund = b.deposit_cents
-      ? "<br><br>Bei Absage bis 24 Stunden vorher wird die Anzahlung automatisch erstattet. Bei späterer Absage oder Nichterscheinen behält der Salon sie als Ausfallpauschale (Nachweis eines geringeren Schadens bleibt vorbehalten)."
+      ? "<br><br>Bei Absage bis 24 Stunden vorher wird die Anzahlung automatisch erstattet. Bei späterer Absage oder Nichterscheinen behält der Betrieb sie als Ausfallpauschale (Nachweis eines geringeren Schadens bleibt vorbehalten)."
       : "";
     jobs.push(
       send(
@@ -229,7 +231,7 @@ export async function sendInvite(to: string, salonName: string, invitedBy: strin
       title: `Du wurdest zu ${salonName} eingeladen`,
       intro: `${esc(invitedBy)} möchte den Kalender von ${esc(salonName)} mit dir teilen.`,
       button: { label: "Konto anlegen", url: `${appUrl()}/login` },
-      body: "Lege das Konto mit genau dieser E-Mail-Adresse an („Noch kein Konto?“). Nach der Bestätigung siehst du den Kalender des Salons.",
+      body: "Lege das Konto mit genau dieser E-Mail-Adresse an („Noch kein Konto?“). Nach der Bestätigung siehst du den Kalender des Betriebs.",
     }),
     "Boxentakt",
     invitedBy,
@@ -254,7 +256,7 @@ export type Followup = {
 export async function sendFollowup(f: Followup) {
   const logo = await logoFor(f.salon_slug);
   const first = f.customer_name.split(/\s+/)[0];
-  const note = `Sie bekommen diese Mail als Kundin bzw. Kunde von ${esc(f.salon_name)}. Keine solchen Mails mehr: ${link(`${appUrl()}/abmelden/${f.unsubscribe_token}`, "abmelden")}`;
+  const note = `Sie bekommen diese Mail als Kunde von ${esc(f.salon_name)}. Keine solchen Mails mehr: ${link(`${appUrl()}/abmelden/${f.unsubscribe_token}`, "abmelden")}`;
   if (f.kind === "review" && f.review_url) {
     return send(
       f.email,
@@ -332,7 +334,7 @@ export async function sendFeedback(f: { to: string; kind: keyof typeof FEEDBACK_
     mailLayout({
       brand: platform,
       title: `${FEEDBACK_KIND[f.kind]} von ${f.salon ?? f.from}`,
-      rows: [["Von", f.from], ["Salon", f.salon ?? "–"], ["Seite", f.page ?? "–"]],
+      rows: [["Von", f.from], ["Betrieb", f.salon ?? "–"], ["Seite", f.page ?? "–"]],
       body: `<div style="white-space:pre-wrap">${esc(f.message)}</div>`,
     }),
     "Boxentakt Feedback",
@@ -381,7 +383,7 @@ export async function sendVoucherMails(v: VoucherPaid) {
         rows,
         button: { label: "Gutschein ansehen und drucken", url },
         body: contact(v.salon_address, v.salon_phone) || undefined,
-        note: "Einlösbar im Salon, auch in Teilbeträgen. Bitte den Code beim Bezahlen nennen.",
+        note: "Einlösbar im Betrieb, auch in Teilbeträgen. Bitte den Code beim Bezahlen nennen.",
       }),
       v.salon_name,
       v.reply_to,
@@ -416,7 +418,7 @@ export async function sendDeletionNotice(d: DeletionNotice) {
       ? {
           subject: `${d.salon_name} wurde gelöscht`,
           parts: {
-            title: "Dein Salon wurde gelöscht",
+            title: "Dein Betrieb wurde gelöscht",
             intro: `Wie angekündigt haben wir ${esc(d.salon_name)} mit allen Terminen, Kunden, Einstellungen und Logins gelöscht. Rechnungen bleiben wegen der gesetzlichen Aufbewahrungspflicht bei Stripe gespeichert.`,
             button: { label: "Neu starten", url: `${appUrl()}/registrieren` },
             body: "Danke, dass du Boxentakt ausprobiert hast. Wenn du uns sagen magst, was gefehlt hat, antworte einfach auf diese Mail.",
@@ -430,12 +432,12 @@ export async function sendDeletionNotice(d: DeletionNotice) {
                 ? `${d.salon_name}: Online-Buchung pausiert`
                 : `${d.salon_name} wird am ${day} gelöscht`,
           parts: {
-            title: d.stage === 4 ? "Letzte Erinnerung: morgen wird gelöscht" : d.stage === 1 ? "Dein Zugang ist abgelaufen" : "Dein Salon wird bald gelöscht",
+            title: d.stage === 4 ? "Letzte Erinnerung: morgen wird gelöscht" : d.stage === 1 ? "Dein Zugang ist abgelaufen" : "Dein Betrieb wird bald gelöscht",
             intro:
               d.stage === 1
                 ? `Die Testphase bzw. das Abo von ${esc(d.salon_name)} ist beendet, die Buchungsseite nimmt keine Termine mehr an. Deine Daten bewahren wir noch bis zum ${day} auf, danach löschen wir sie.`
                 : `Ohne aktives Abo löschen wir ${esc(d.salon_name)} am ${day} – mit allen Terminen, Kunden, Einstellungen und Logins. Das lässt sich nicht rückgängig machen.`,
-            rows: [["Salon", d.salon_name], ["Löschung am", day]] as [string, string][],
+            rows: [["Betrieb", d.salon_name], ["Löschung am", day]] as [string, string][],
             button: { label: "Abo abschließen", url: `${appUrl()}/dashboard/leistungen#abo` },
             body: keep,
             note: "Du möchtest nicht warten? Antworte auf diese Mail, dann löschen wir sofort.",

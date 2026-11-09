@@ -6,20 +6,22 @@ Domain geplant: boxentakt.de (noch nicht live).
 
 ## Funktionen
 
-- `/<slug>` – öffentliche Buchungsseite je Salon, ohne Kundenkonto (Preise je Person, Warteliste, Kalender-Export, optionale Anzahlung)
+- `/<slug>` – öffentliche Buchungsseite je Betrieb, ohne Kundenkonto (Kennzeichen und Fahrzeugklasse, Preise je Person, Warteliste, Kalender-Export, optionale Anzahlung)
 - `/storno/<token>` – Absage-Link aus der Bestätigungs-Mail
-- `/login`, `/registrieren`, `/passwort` – Konto für Salon-Inhaber und Team
+- `/login`, `/registrieren`, `/passwort` – Konto für Betriebsinhaber und Team
 - `/dashboard` – Tages- und Wochenkalender, Kundenkartei mit CSV-Export, Kassieren per QR-Code, Einstellungen
 - Erinnerung am Vortag, Google-Bewertungsbitte, Wiederbuchungs-Erinnerung, Push aufs Handy bei neuer Buchung (PWA)
-- Abo über Stripe (29 €/Monat oder 290 €/Jahr), Anzahlungen über Stripe Connect direkt an den Salon
+- Abo über Stripe (29 €/Monat oder 290 €/Jahr), Anzahlungen über Stripe Connect direkt an den Betrieb
 
 ## Stack
 
 Next.js 16 (App Router) · React 19 · Tailwind 4 · Supabase (Postgres, Auth, RLS, Storage) · Stripe · Resend · Vercel
 
 Doppelbuchungen verhindert die Datenbank selbst (Exclusion-Constraint auf `staff_id` + Zeitraum).
-Öffentliche Zugriffe laufen nur über Security-Definer-Funktionen – Kundendaten sind nur für Salon-Mitglieder lesbar.
-Migrationen liegen in `supabase/migrations/`, Projektwissen und Konventionen in `CLAUDE.md`.
+Öffentliche Zugriffe laufen nur über Security-Definer-Funktionen – Kundendaten sind nur für Mitglieder des Betriebs lesbar.
+Migrationen liegen in `supabase/migrations/`.
+
+Hinweis: Intern heißen Tabellen und Funktionen noch `salons`, `staff` usw. (Erbe der Vorlage). Sichtbar im Produkt heißt es Betrieb, Mitarbeiter und Platz.
 
 
 ## Umgebungsvariablen

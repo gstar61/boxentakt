@@ -5,7 +5,7 @@ import { stripe, stripeReady, stripeRpc } from "@/lib/stripe";
 import { euro } from "@/lib/time";
 
 const MESSAGES: Record<string, string> = {
-  vouchers_disabled: "Gutscheine können hier gerade nicht online gekauft werden. Bitte im Salon fragen.",
+  vouchers_disabled: "Gutscheine können hier gerade nicht online gekauft werden. Bitte im Betrieb fragen.",
   invalid_amount: "Bitte einen Betrag zwischen 10 und 500 € wählen.",
   invalid_name: "Bitte Ihren Namen eintragen.",
   invalid_email: "Die E-Mail-Adresse sieht nicht richtig aus.",

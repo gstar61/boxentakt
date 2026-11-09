@@ -11,14 +11,14 @@ const staff = [
   { id: "s3", salon_id: SALON, name: "Lea", sort: 3, active: true },
 ];
 const services = [
-  ["Damen · Waschen, Schneiden, Föhnen", 60, 5500], ["Damen · Föhnen & Styling", 30, 3000], ["Herren · Schneiden", 30, 2800],
-  ["Herren · Schneiden & Bart", 45, 3800], ["Ansatzfarbe inkl. Föhnen", 90, 7000], ["Strähnen / Balayage inkl. Schnitt", 180, 16000],
+  ["Räderwechsel (Sommer/Winter)", 45, 4900], ["Räderwechsel mit Einlagerung", 45, 5900], ["Ölwechsel inkl. Filter", 60, 8900],
+  ["Inspektion", 120, 14900], ["HU/AU", 60, 12900], ["Achsvermessung", 60, 8900],
 ].map(([name, duration_min, price_cents], i) => ({ id: `v${i}`, salon_id: SALON, name, duration_min, price_cents, active: true, sort: i }));
 const hours = [1, 2, 3, 4, 5].flatMap((w) => [{ weekday: w, opens: "09:00:00", closes: "13:00:00" }, { weekday: w, opens: "14:00:00", closes: "19:00:00" }]).concat([{ weekday: 6, opens: "09:00:00", closes: "15:00:00" }]);
 const cover = process.env.COVER === "1";
 const salon = {
-  id: SALON, slug: "studio-mira", name: "Studio Mira", address: "Q7 12, 68161 Mannheim", phone: "0621 1234567",
-  notice: "Samstag ab 15 Uhr nur nach Vereinbarung.", legal_name: "Mira Beispiel", contact_email: "hallo@studio-mira.de", vat_id: null, legal_extra: null,
+  id: SALON, slug: "werkstatt-mira", name: "Autowerkstatt Mira", address: "Q7 12, 68161 Mannheim", phone: "0621 1234567",
+  notice: "Samstag ab 15 Uhr nur nach Vereinbarung.", legal_name: "Mira Beispiel", contact_email: "hallo@werkstatt-mira.de", vat_id: null, legal_extra: null,
   owner_email: "mira@example.com", timezone: tz, slot_step: 15, booking_days: 28, deposit_percent: 20,
   logo_url: cover ? "http://localhost:54321/storage/v1/object/public/salon-media/logo.png" : null,
   cover_url: cover ? "http://localhost:54321/storage/v1/object/public/salon-media/cover.jpg" : null,

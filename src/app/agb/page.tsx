@@ -18,16 +18,16 @@ export default function Page() {
       <section>
         <h2>2. Leistungsbeschreibung</h2>
         <p>
-          Boxentakt stellt eine cloudbasierte Software für Friseursalons bereit. Dazu gehören:
+          Boxentakt stellt eine cloudbasierte Software für Werkstätten bereit. Dazu gehören:
         </p>
         <ul>
-          <li>eine eigene Online-Buchungsseite des Salons mit Impressum und Datenschutzerklärung</li>
+          <li>eine eigene Online-Buchungsseite des Betriebs mit Impressum und Datenschutzerklärung</li>
           <li>ein Terminkalender pro Mitarbeiter in Tages- und Wochenansicht, mit Schutz vor Doppelbuchungen</li>
           <li>Öffnungszeiten mit Pausen, Abwesenheiten und Hinweisen für Kunden</li>
           <li>eine Kundenkartei mit Besuchen, Nichterscheinen und Notizen</li>
           <li>automatische E-Mails an Kunden: Bestätigung, Erinnerung am Vortag und Absage-Link</li>
           <li>Zugänge für weitere Teammitglieder per Einladung</li>
-          <li>optional eine Online-Anzahlung bei der Buchung über das eigene Stripe-Konto des Salons</li>
+          <li>optional eine Online-Anzahlung bei der Buchung über das eigene Stripe-Konto des Betriebs</li>
         </ul>
         <p>
           Auf Termine, die über die Buchungsseite gebucht werden, erhebt Boxentakt keine Provision. Ein Anspruch auf bestimmte Funktionen über die
@@ -37,7 +37,7 @@ export default function Page() {
       <section>
         <h2>3. Testphase und Preise</h2>
         <p>
-          Neue Salons können Boxentakt 30 Tage kostenlos testen, ohne Zahlungsdaten anzugeben. Danach kostet Boxentakt 29 € pro Monat oder bei jährlicher Zahlung 290 € pro Jahr. Das Abo
+          Neue Betriebe können Boxentakt 30 Tage kostenlos testen, ohne Zahlungsdaten anzugeben. Danach kostet Boxentakt 29 € pro Monat oder bei jährlicher Zahlung 290 € pro Jahr. Das Abo
           schließt der Kunde ausdrücklich in den Einstellungen ab; ohne Abo nimmt die Buchungsseite nach der Testphase keine Online-Termine mehr an.
           Konto und Daten bleiben danach noch 90 Tage erhalten (mindestens 30 Tage ab der ersten Benachrichtigung) und werden dann gelöscht; der
           Kunde wird vorher mehrfach per E-Mail erinnert. Dasselbe gilt nach dem Ende eines gekündigten Abos. Preisänderungen kündigt Boxentakt mindestens 30 Tage im Voraus per E-Mail an.
@@ -72,13 +72,13 @@ export default function Page() {
         <h2>7. Online-Anzahlung</h2>
         <p>
           Die Online-Anzahlung ist optional. Dafür verbindet der Kunde ein eigenes Stripe-Konto und schließt dazu einen Vertrag direkt mit Stripe.
-          Zahlungen seiner Kundinnen und Kunden gehen unmittelbar auf dieses Konto; Boxentakt ist nicht Vertragspartei dieser Zahlungen, nimmt kein Geld
+          Zahlungen seiner Endkunden gehen unmittelbar auf dieses Konto; Boxentakt ist nicht Vertragspartei dieser Zahlungen, nimmt kein Geld
           entgegen und erhebt keine Provision. Die Stripe-Gebühren trägt der Kunde. Bei einer Absage über den Absage-Link bis 24 Stunden vor dem Termin
           wird die Anzahlung automatisch erstattet. Bei späterer Absage oder Nichterscheinen behält der Kunde sie als Ausfallpauschale; dieser Regel
-          stimmen Kundinnen und Kunden vor der Zahlung ausdrücklich zu, einschließlich des Vorbehalts, einen geringeren Schaden nachzuweisen. Weitere
-          Erstattungen nimmt der Kunde selbst in seinem Stripe-Konto vor. Über dasselbe Stripe-Konto kann der Kunde Zahlungen im Salon per QR-Code
+          stimmen Endkunden vor der Zahlung ausdrücklich zu, einschließlich des Vorbehalts, einen geringeren Schaden nachzuweisen. Weitere
+          Erstattungen nimmt der Kunde selbst in seinem Stripe-Konto vor. Über dasselbe Stripe-Konto kann der Kunde Zahlungen im Betrieb per QR-Code
           annehmen; diese Funktion ist kein Kassensystem im Sinne der Kassensicherungsverordnung, die Aufzeichnungspflichten bleiben beim Kunden.
-          Ebenso kann der Kunde Gutscheine online verkaufen oder im Salon ausstellen. Vertragspartner des Gutscheins ist allein der Kunde; er ist für
+          Ebenso kann der Kunde Gutscheine online verkaufen oder im Betrieb ausstellen. Vertragspartner des Gutscheins ist allein der Kunde; er ist für
           Einlösung, Gültigkeit und die steuerliche Behandlung verantwortlich, Boxentakt stellt nur die Verwaltung der Codes und Restwerte bereit.
         </p>
       </section>
@@ -93,7 +93,7 @@ export default function Page() {
       <section>
         <h2>9. Daten der Salonkunden</h2>
         <p>
-          Für die Daten seiner Kundinnen und Kunden ist der Kunde datenschutzrechtlich Verantwortlicher. Boxentakt verarbeitet sie als
+          Für die Daten seiner Endkunden ist der Kunde datenschutzrechtlich Verantwortlicher. Boxentakt verarbeitet sie als
           Auftragsverarbeiter (Art. 28 DSGVO). Einzelheiten regelt ein Auftragsverarbeitungsvertrag, den Boxentakt auf Anfrage zur Verfügung stellt.
         </p>
       </section>

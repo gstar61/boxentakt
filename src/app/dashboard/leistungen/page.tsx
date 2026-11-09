@@ -12,6 +12,7 @@ import { MediaSection } from "./MediaSection";
 import { FollowupSection } from "./FollowupSection";
 import { PushSection } from "./PushSection";
 import { StaffPriceSection } from "./StaffPriceSection";
+import { VehicleClassSection } from "./VehicleClassSection";
 import { ClosuresSection } from "./ClosuresSection";
 import { DataSection } from "./DataSection";
 
@@ -19,7 +20,7 @@ const DAYS = [
   [1, "Montag"], [2, "Dienstag"], [3, "Mittwoch"], [4, "Donnerstag"], [5, "Freitag"], [6, "Samstag"], [0, "Sonntag"],
 ] as const;
 const TABS = [
-  { id: "salon", label: "Salon", icon: Store },
+  { id: "salon", label: "Betrieb", icon: Store },
   { id: "leistungen", label: "Leistungen & Preise", icon: Scissors },
   { id: "team", label: "Team & Zeiten", icon: Clock3 },
   { id: "nachrichten", label: "Benachrichtigungen", icon: BellRing },
@@ -133,7 +134,7 @@ export default function SettingsPage() {
     <div className="grid gap-6 pb-24">
       <div className="grid gap-2">
         <h1 className="text-3xl font-semibold sm:text-4xl">Einstellungen</h1>
-        <p className="text-muted">Salon, Angebot, Team und Abo – nach Bereichen sortiert.</p>
+        <p className="text-muted">Betrieb, Angebot, Team und Abo – nach Bereichen sortiert.</p>
       </div>
 
       <div className="grid items-start gap-6 lg:grid-cols-[210px_minmax(0,1fr)]">
@@ -154,7 +155,7 @@ export default function SettingsPage() {
           {tab === "salon" && (
             <>
               <section className="card grid gap-4 p-5 sm:p-6">
-                <h2 className="text-[15px] font-semibold">Salon</h2>
+                <h2 className="text-[15px] font-semibold">Betrieb</h2>
                 <div className="grid max-w-3xl gap-3 sm:grid-cols-3">
                   <Input id="s-name" label="Name" value={d.name} onChange={(v) => upd({ name: v })} />
                   <Input id="s-address" label="Adresse" value={d.address} onChange={(v) => upd({ address: v })} />
@@ -183,7 +184,7 @@ export default function SettingsPage() {
                   </div>
                   {d.services.map((s, i) => (
                     <div key={s.id} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_40px] items-center gap-2 border-b border-line pb-3 last:border-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_140px_120px_40px] sm:border-0 sm:pb-0">
-                      <input aria-label="Bezeichnung" className="input input-sm col-span-3 sm:col-span-1" value={s.name} placeholder="z. B. Herrenschnitt" onChange={(e) => upd({ services: d.services.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })} />
+                      <input aria-label="Bezeichnung" className="input input-sm col-span-3 sm:col-span-1" value={s.name} placeholder="z. B. Ölwechsel" onChange={(e) => upd({ services: d.services.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })} />
                       <select aria-label="Dauer" className="input input-sm" value={s.duration_min} onChange={(e) => upd({ services: d.services.map((x, j) => (j === i ? { ...x, duration_min: Number(e.target.value) } : x)) })}>
                         {DUR.map((m) => <option key={m} value={m}>{duration(m)}</option>)}
                       </select>
@@ -194,6 +195,7 @@ export default function SettingsPage() {
                 </div>
               </section>
 
+              <VehicleClassSection />
               <StaffPriceSection />
             </>
           )}

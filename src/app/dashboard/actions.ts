@@ -57,7 +57,7 @@ export async function inviteMember(accessToken: string, salonId: string, email: 
   if (error) return { ok: false, message: "Einladung konnte nicht gespeichert werden." };
   const { data: salon } = await sb.from("salons").select("name").eq("id", String(salonId)).maybeSingle();
   try {
-    const r = await sendInvite(mail, (salon as { name: string } | null)?.name ?? "Salon", auth.user?.email ?? "");
+    const r = await sendInvite(mail, (salon as { name: string } | null)?.name ?? "Betrieb", auth.user?.email ?? "");
     return { ok: true, message: r.skipped ? "Einladung gespeichert (E-Mail-Versand nicht eingerichtet)." : `Einladung an ${mail} gesendet.` };
   } catch (e) {
     console.error("invite mail failed", e);

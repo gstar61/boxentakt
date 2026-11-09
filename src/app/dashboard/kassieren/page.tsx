@@ -90,12 +90,12 @@ export default function CounterPage() {
     <div className="grid gap-6 pb-24">
       <div className="grid gap-2">
         <h1 className="text-3xl font-semibold sm:text-4xl">Kassieren</h1>
-        <p className="text-muted">Betrag eingeben, QR-Code zeigen. Die Kundin zahlt mit dem eigenen Handy: Apple Pay, Google Pay oder Karte.</p>
+        <p className="text-muted">Betrag eingeben, QR-Code zeigen. Der Kunde zahlt mit dem eigenen Handy: Apple Pay, Google Pay oder Karte.</p>
       </div>
 
       {enabled === false && (
         <section className="card grid gap-3 p-5 sm:p-6">
-          <p className="text-sm text-muted">Für Kartenzahlungen muss der Salon zuerst sein Stripe-Konto verbinden.</p>
+          <p className="text-sm text-muted">Für Kartenzahlungen muss der Betrieb zuerst sein Stripe-Konto verbinden.</p>
           {role === "owner" ? (
             <Link href="/dashboard/leistungen#abo" className="btn w-fit">Zu den Einstellungen</Link>
           ) : (
@@ -138,7 +138,7 @@ export default function CounterPage() {
           )}
           <div className="grid gap-1.5">
             <label htmlFor="what" className="text-[13px] text-muted">Wofür (optional, steht auf dem Beleg)</label>
-            <input id="what" className="input input-sm" maxLength={120} placeholder="z. B. Schnitt und Färben" value={text} onChange={(e) => setText(e.target.value)} />
+            <input id="what" className="input input-sm" maxLength={120} placeholder="z. B. Räderwechsel und Bremsencheck" value={text} onChange={(e) => setText(e.target.value)} />
           </div>
           {msg && <p role="alert" className="text-sm text-danger">{msg}</p>}
           <button className="btn btn-primary w-fit" disabled={busy || !amount}>
@@ -203,7 +203,7 @@ export default function CounterPage() {
             </ul>
           )}
           <p className="text-xs text-dim">
-            Das Geld geht direkt auf das Stripe-Konto des Salons, abzüglich der Stripe-Gebühr. Kartenzahlungen gehören in die Kassenaufzeichnung; diese
+            Das Geld geht direkt auf das Stripe-Konto des Betriebs, abzüglich der Stripe-Gebühr. Kartenzahlungen gehören in die Kassenaufzeichnung; diese
             Funktion ersetzt keine Registrierkasse mit TSE.
           </p>
         </section>

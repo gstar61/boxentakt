@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Boxentakt",
     short_name: "Boxentakt",
-    description: "Kalender und Online-Terminbuchung für deinen Salon",
+    description: "Kalender und Online-Terminbuchung für deinen Betrieb",
     id: "/dashboard",
     start_url: "/dashboard",
     scope: "/",

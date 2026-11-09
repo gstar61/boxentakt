@@ -43,7 +43,7 @@ export function FeedbackButton({ salonId }: { salonId: string | null }) {
       {/* portal: the drawer must not be trapped inside a parent with backdrop-filter or transforms */}
       {open && createPortal(
         <Drawer title="Feedback" eyebrow="Direkt an das Boxentakt-Team" onClose={() => setOpen(false)}>
-          <p className="text-sm text-muted">Boxentakt wird mit den Salons gebaut, die es jeden Tag benutzen. Jede Nachricht landet bei uns persönlich, keine Warteschleife.</p>
+          <p className="text-sm text-muted">Boxentakt wird mit den Betrieben gebaut, die es jeden Tag benutzen. Jede Nachricht landet bei uns persönlich, keine Warteschleife.</p>
           <form onSubmit={send} className="grid gap-4" noValidate>
             <div role="radiogroup" aria-label="Art" className="grid grid-cols-3 gap-2">
               {KINDS.map(({ id, label, icon: Icon }) => (

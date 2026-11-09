@@ -55,15 +55,15 @@ export default function Page() {
       <section>
         <h2>6. Zahlungen (Stripe)</h2>
         <p>
-          Das Boxentakt-Abo rechnen wir über Stripe Payments Europe Ltd. (Dublin, Irland) ab. Beim Abschluss gibt der Salon Name, Rechnungsadresse,
+          Das Boxentakt-Abo rechnen wir über Stripe Payments Europe Ltd. (Dublin, Irland) ab. Beim Abschluss gibt der Betrieb Name, Rechnungsadresse,
           optional eine Umsatzsteuer-ID und seine Zahlungsmethode direkt bei Stripe ein; Zahlungsdaten laufen nicht über unsere Server. Wir speichern
           nur die Kunden- und Abo-Kennung sowie den Abo-Status. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO.
         </p>
         <p>
-          Nutzt ein Salon die Online-Anzahlung, zahlen seine Kundinnen und Kunden über das eigene Stripe-Konto des Salons. Verantwortlich für diese
-          Zahlungen sind der Salon und Stripe; wir übermitteln dafür Leistung, Termin, Betrag und die E-Mail-Adresse an Stripe und speichern den
+          Nutzt ein Betrieb die Online-Anzahlung, zahlen seine Endkunden über das eigene Stripe-Konto des Betriebs. Verantwortlich für diese
+          Zahlungen sind der Betrieb und Stripe; wir übermitteln dafür Leistung, Termin, Betrag und die E-Mail-Adresse an Stripe und speichern den
           Zahlungsstatus am Termin. Beim Online-Kauf eines Gutscheins gilt dasselbe; gespeichert werden Betrag, Code, Name und E-Mail-Adresse der
-          käufenden Person sowie optional Empfängername und Nachricht, damit der Gutschein zugestellt und im Salon eingelöst werden kann.
+          käufenden Person sowie optional Empfängername und Nachricht, damit der Gutschein zugestellt und im Betrieb eingelöst werden kann.
         </p>
       </section>
       <section>
@@ -77,15 +77,15 @@ export default function Page() {
       <section>
         <h2>8. Cookies</h2>
         <p>
-          Wir setzen ausschließlich technisch notwendige Cookies ein, um die Anmeldung des Salon-Teams aufrechtzuerhalten. Die öffentlichen
+          Wir setzen ausschließlich technisch notwendige Cookies ein, um die Anmeldung des Betriebsteams aufrechtzuerhalten. Die öffentlichen
           Buchungsseiten setzen keine Cookies. Cookies zu Werbe- oder Tracking-Zwecken verwenden wir nicht.
         </p>
       </section>
       <section>
         <h2>9. Daten der Salonkunden</h2>
         <p>
-          Wenn Kundinnen und Kunden über eine Buchungsseite einen Termin buchen, ist der jeweilige Salon für diese Daten verantwortlich. Seine eigene
-          Datenschutzerklärung ist auf der Buchungsseite verlinkt. Boxentakt verarbeitet diese Daten im Auftrag des Salons (Art. 28 DSGVO). Einen
+          Wenn Endkunden über eine Buchungsseite einen Termin buchen, ist der jeweilige Betrieb für diese Daten verantwortlich. Seine eigene
+          Datenschutzerklärung ist auf der Buchungsseite verlinkt. Boxentakt verarbeitet diese Daten im Auftrag des Betriebs (Art. 28 DSGVO). Einen
           Auftragsverarbeitungsvertrag (AVV) stellen wir auf Anfrage zur Verfügung.
         </p>
       </section>
@@ -93,7 +93,7 @@ export default function Page() {
         <h2>10. Speicherdauer</h2>
         <p>
           Wir speichern personenbezogene Daten nur so lange, wie es für die jeweiligen Zwecke erforderlich ist oder gesetzliche Aufbewahrungspflichten
-          bestehen. Salons ohne aktive Testphase oder Abo löschen wir 90 Tage nach Ende des Zugangs automatisch mit allen Terminen, Kundendaten
+          bestehen. Betriebe ohne aktive Testphase oder Abo löschen wir 90 Tage nach Ende des Zugangs automatisch mit allen Terminen, Kundendaten
           und Logins; die Inhaber werden vorher per E-Mail erinnert (sofort, 30, 7 und 1 Tag vorher). Rechnungsdaten bewahrt Stripe für die
           gesetzlichen Fristen auf. Für die sofortige vollständige Löschung eines Kontos genügt eine E-Mail an {mail}.
         </p>
@@ -106,8 +106,8 @@ export default function Page() {
           Baden-Württemberg beim Landesbeauftragten für den Datenschutz und die Informationsfreiheit.
         </p>
         <p>
-          Salon-Inhaber laden alle zu ihrem Salon und Konto gespeicherten Daten jederzeit selbst unter Einstellungen → „Daten &amp; Datenschutz“
-          herunter. Kundinnen und Kunden eines Salons wenden sich für eine Auskunft an den jeweiligen Salon, der dafür verantwortlich ist; wir
+          Betriebsinhaber laden alle zu ihrem Betrieb und Konto gespeicherten Daten jederzeit selbst unter Einstellungen → „Daten &amp; Datenschutz“
+          herunter. Endkunden eines Betriebs wenden sich für eine Auskunft an den jeweiligen Betrieb, der dafür verantwortlich ist; wir
           unterstützen ihn dabei. Anfragen beantworten wir spätestens innerhalb eines Monats.
         </p>
       </section>

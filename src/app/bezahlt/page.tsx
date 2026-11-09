@@ -15,7 +15,7 @@ export default async function Page(props: PageProps<"/bezahlt">) {
       </span>
       <h1 className="text-2xl font-semibold">{aborted ? "Zahlung abgebrochen" : "Danke, bezahlt!"}</h1>
       <p className="text-muted">
-        {aborted ? "Es wurde nichts abgebucht. Sie können den QR-Code im Salon erneut scannen." : "Die Zahlung ist beim Salon eingegangen. Den Beleg schickt Stripe per E-Mail."}
+        {aborted ? "Es wurde nichts abgebucht. Sie können den QR-Code im Betrieb erneut scannen." : "Die Zahlung ist beim Betrieb eingegangen. Den Beleg schickt Stripe per E-Mail."}
       </p>
     </main>
       </AuthCard>

@@ -96,13 +96,16 @@ export function AppointmentDrawer(props: {
       )}
       <dl className="grid gap-2.5 rounded-[14px] border border-line bg-card-2 p-4 text-sm">
         <Row k="Termin" v={`${longDate(zonedDate(a.start, tz))}, ${hm(zonedMinutes(a.start, tz))}–${hm(zonedMinutes(a.end, tz))}`} />
+        {a.license_plate && <Row k="Kennzeichen" v={a.license_plate} />}
+        {a.vehicle_info && <Row k="Fahrzeug" v={a.vehicle_info} />}
+        {a.vehicle_class !== "pkw" && <Row k="Klasse" v={a.vehicle_class === "suv" ? "SUV / Geländewagen" : "Transporter / Bus"} />}
         <Row k="Leistung" v={a.service_name} />
         <Row k="Bei" v={props.staff.find((s) => s.id === a.staff_id)?.name ?? ""} />
         <Row k="Preis" v={euro(a.price_cents)} />
         {a.deposit_cents && a.payment_status && <Row k="Anzahlung" v={`${euro(a.deposit_cents)} ${PAYMENT_LABEL[a.payment_status]}`} />}
         <Row k="Telefon" v={a.customer?.phone ?? "–"} copy={a.customer?.phone ?? undefined} />
         {a.customer?.email && <Row k="E-Mail" v={a.customer.email} />}
-        <Row k="Gebucht über" v={a.source === "online" ? "Online" : "Salon"} />
+        <Row k="Gebucht über" v={a.source === "online" ? "Online" : "Betrieb"} />
         {a.note && <Row k="Hinweis" v={a.note} />}
         {a.customer?.note && <Row k="Kundennotiz" v={a.customer.note} />}
       </dl>

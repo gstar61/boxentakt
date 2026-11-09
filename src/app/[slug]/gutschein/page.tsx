@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata(props: PageProps<"/[slug]/gutschein">): Promise<Metadata> {
   const { slug } = await props.params;
   const salon = await loadSalon(slug);
-  return salon ? { title: `Gutschein verschenken – ${salon.name}`, description: `Gutschein für ${salon.name} online kaufen, sofort per Mail zum Ausdrucken oder Weiterleiten.` } : { title: "Salon nicht gefunden" };
+  return salon ? { title: `Gutschein verschenken – ${salon.name}`, description: `Gutschein für ${salon.name} online kaufen, sofort per Mail zum Ausdrucken oder Weiterleiten.` } : { title: "Betrieb nicht gefunden" };
 }
 
 export default async function Page(props: PageProps<"/[slug]/gutschein">) {

@@ -24,6 +24,8 @@ export type Salon = {
   deposit_percent: number;
   holiday_state: string | null;
   vouchers_enabled: boolean;
+  /** Zuschlag je Fahrzeugklasse (Minuten, Cent) */
+  class_extra: Record<"pkw" | "suv" | "transporter", { min: number; cents: number }>;
 };
 export type Staff = { id: string; name: string; active: boolean; sort: number };
 export type Service = { id: string; name: string; duration_min: number; price_cents: number; active: boolean; sort: number; rebook_weeks: number | null };
