@@ -1,6 +1,8 @@
 "use server";
 
+import { after } from "next/server";
 import { publicClient } from "@/lib/supabase";
+import { deliverPendingEvents } from "@/lib/radsatzpro";
 import { appUrl, sendBookingMails, sendRescheduleMails, type Booked, type Rescheduled } from "@/lib/mail";
 import { pushNewBooking } from "@/lib/push";
 import { stripe, stripeReady, stripeRpc } from "@/lib/stripe";
@@ -134,6 +136,7 @@ export async function bookAction(
     sendBookingMails(booking, { name: input.name.trim(), email: input.email.trim() || undefined, phone: input.phone.trim(), note: input.note.trim() || undefined }),
     pushNewBooking(booking.id, booking, input.name.trim()),
   ]);
+  after(() => deliverPendingEvents(5));
   return { ok: true, booking };
 }
 
@@ -153,6 +156,7 @@ export async function cancelAction(token: string) {
     }
   }
   if (ok) await notifyWaitlist({ cancelToken: String(token) });
+  if (ok) after(() => deliverPendingEvents(5));
   return { ok, refunded };
 }
 
@@ -236,5 +240,6 @@ export async function rescheduleAction(token: string, start: string) {
     return { ok: false as const, error: code ? MOVE_MESSAGES[code] : "Verschieben hat nicht geklappt. Bitte in der Werkstatt anrufen." };
   }
   await sendRescheduleMails(data as Rescheduled);
+  after(() => deliverPendingEvents(5));
   return { ok: true as const };
 }

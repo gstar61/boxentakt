@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { Ban, CalendarOff, ChevronLeft, ChevronRight, Moon, Plus, Warehouse } from "lucide-react";
 import { addDays, atLocal, dayMonth, euro, hm, dayHours, dayNote, longDate, shortDay, toMin, weekStart, zonedDate, zonedMinutes } from "@/lib/time";
 import { useSalon } from "./salon-context";
+import { browserClient } from "@/lib/supabase";
+import { flushIntegrationEvents } from "./integration-actions";
 import { Legend, Stat } from "./ui";
 import { loadRange, type Absence, type Appt } from "./_cal/data";
 import { Lane } from "./_cal/Lane";
@@ -108,6 +110,8 @@ export default function CalendarPage() {
     setToast({ text, err });
     if (!err) setOpen(null);
     load();
+    // Änderungen sofort an RadsatzPro melden (ohne Verbindung passiert nichts)
+    if (!err) browserClient().auth.getSession().then(({ data }: { data: { session: { access_token: string } | null } }) => data.session && flushIntegrationEvents(data.session.access_token)).catch(() => {});
   };
   const selectedAppt = open?.kind === "appt" ? appts.find((a) => a.id === open.id) : undefined;
   const selectedAbsence = open?.kind === "absence" ? absences.find((a) => a.id === open.id) : undefined;

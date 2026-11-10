@@ -14,6 +14,7 @@ import { PushSection } from "./PushSection";
 import { StaffPriceSection } from "./StaffPriceSection";
 import { VehicleClassSection } from "./VehicleClassSection";
 import { ResourceSection } from "./ResourceSection";
+import { RadsatzProSection } from "./RadsatzProSection";
 import { ClosuresSection } from "./ClosuresSection";
 import { DataSection } from "./DataSection";
 
@@ -170,6 +171,7 @@ export default function SettingsPage() {
               </section>
 
               <MediaSection />
+              <RadsatzProSection />
             </>
           )}
           {tab === "leistungen" && (

@@ -13,3 +13,4 @@ for f in supabase/migrations/*.sql; do
   "${P[@]}" "$DB" -f "$f"
 done
 "${P[@]}" "$DB" -f supabase/tests/booking.sql
+"${P[@]}" "$DB" -f supabase/tests/integration.sql

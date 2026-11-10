@@ -1,4 +1,6 @@
 import type Stripe from "stripe";
+import { after } from "next/server";
+import { deliverPendingEvents } from "@/lib/radsatzpro";
 import { sendBookingMails, sendVoucherMails, type Booked, type VoucherPaid } from "@/lib/mail";
 import { pushNewBooking } from "@/lib/push";
 import { stripe, stripeRpc, subscriptionFields } from "@/lib/stripe";
@@ -34,6 +36,7 @@ async function depositPaid(session: Stripe.Checkout.Session, account: string) {
     sendBookingMails(r, { name: c.name, email: c.email ?? undefined, phone: c.phone, note: c.note ?? undefined }),
     pushNewBooking(appt, r, c.name),
   ]);
+  after(() => deliverPendingEvents(5));
 }
 
 async function voucherPaid(session: Stripe.Checkout.Session) {

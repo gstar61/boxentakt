@@ -1,4 +1,5 @@
 import { publicClient } from "@/lib/supabase";
+import { deliverPendingEvents } from "@/lib/radsatzpro";
 import { mailEnabled, sendDeletionNotice, sendFollowup, sendReminder, type DeletionNotice, type Followup } from "@/lib/mail";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +9,12 @@ export async function GET(request: Request) {
   if (!process.env.CRON_SECRET || request.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response("Unauthorized", { status: 401 });
   }
-  if (!mailEnabled()) return Response.json({ sent: 0, skipped: "mail not configured" });
+  // RadsatzPro: liegengebliebene Ereignisse erneut versuchen (unabhängig vom Mailversand)
+  const integration = await deliverPendingEvents(30).catch((e) => {
+    console.error("integration delivery failed", e);
+    return null;
+  });
+  if (!mailEnabled()) return Response.json({ sent: 0, skipped: "mail not configured", integration });
   const key = process.env.REMINDER_KEY ?? "";
   const [reminders, followups, deletions] = await Promise.all([
     publicClient().rpc("take_due_reminders", { p_key: key }),
@@ -25,5 +31,5 @@ export async function GET(request: Request) {
   ]);
   const failed = results.filter((r) => r.status === "rejected");
   failed.forEach((f) => console.error("mail failed", (f as PromiseRejectedResult).reason));
-  return Response.json({ reminders: reminders.data?.length ?? 0, followups: followups.data?.length ?? 0, deletions: deletions.data?.length ?? 0, failed: failed.length });
+  return Response.json({ reminders: reminders.data?.length ?? 0, followups: followups.data?.length ?? 0, deletions: deletions.data?.length ?? 0, failed: failed.length, integration });
 }

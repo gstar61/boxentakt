@@ -6,6 +6,7 @@ import { browserClient } from "@/lib/supabase";
 import { atLocal, euro, hm, longDate, zonedDate, zonedMinutes } from "@/lib/time";
 import { Drawer, Row, Select, TextField } from "../ui";
 import { notifyCustomer, notifyWaitlistForCancel } from "../actions";
+import { lookupRadsatz, type RadsatzLookup } from "../integration-actions";
 import { SlotPicker } from "./SlotPicker";
 import { PAYMENT_LABEL, PLACE_FULL, STATUS_LABEL, pickPlace, type Appt, type Status } from "./data";
 import { useSalon } from "../salon-context";
@@ -36,6 +37,7 @@ export function AppointmentDrawer(props: {
   const [moving, setMoving] = useState(false);
   const [move, setMove] = useState({ date: zonedDate(a.start, tz), staffId: a.staff_id, min: zonedMinutes(a.start, tz) as number | null });
   const [busy, setBusy] = useState(false);
+  const [radsatz, setRadsatz] = useState<RadsatzLookup | "loading" | null>(null);
   const durationMin = (a.end.getTime() - a.start.getTime()) / 60000;
 
   useEffect(() => {
@@ -63,6 +65,12 @@ export function AppointmentDrawer(props: {
     }
     setBusy(false);
     props.onChanged(text);
+  }
+
+  async function checkRadsatz() {
+    setRadsatz("loading");
+    const { data } = await browserClient().auth.getSession();
+    setRadsatz(data.session ? await lookupRadsatz(data.session.access_token, a.id) : { state: "off" });
   }
 
   async function saveMove() {
@@ -114,6 +122,26 @@ export function AppointmentDrawer(props: {
         <Row k="Termin" v={`${longDate(zonedDate(a.start, tz))}, ${hm(zonedMinutes(a.start, tz))}–${hm(zonedMinutes(a.end, tz))}`} />
         {a.license_plate && <Row k="Kennzeichen" v={a.license_plate} />}
         {place && <Row k="Platz" v={place.name} />}
+        {a.license_plate && (
+          <div className="grid gap-1.5">
+            <div className="flex items-center justify-between gap-3">
+              <dt className="text-muted">Radsatz</dt>
+              <dd>
+                {radsatz === null && <button className="btn btn-sm" onClick={checkRadsatz}>In RadsatzPro prüfen</button>}
+                {radsatz === "loading" && <span className="text-muted">Prüft …</span>}
+                {radsatz && radsatz !== "loading" && radsatz.state === "none" && <span>Kein Radsatz eingelagert</span>}
+                {radsatz && radsatz !== "loading" && radsatz.state === "off" && <span className="text-muted">RadsatzPro nicht verbunden</span>}
+                {radsatz && radsatz !== "loading" && radsatz.state === "error" && <span className="text-danger">{radsatz.message}</span>}
+              </dd>
+            </div>
+            {radsatz && radsatz !== "loading" && radsatz.state === "found" && radsatz.wheelsets.map((w) => (
+              <div key={w.id} className="rounded-lg bg-accent/10 px-3 py-2 text-[13px]">
+                <span className="font-medium">Lagerplatz {w.location ?? "unbekannt"}</span>
+                <span className="text-muted"> · {[w.season, w.brand, w.size].filter(Boolean).join(" · ")}{w.stored_until ? ` · bis ${w.stored_until.slice(0, 10)}` : ""}</span>
+              </div>
+            ))}
+          </div>
+        )}
         {a.vehicle_info && <Row k="Fahrzeug" v={a.vehicle_info} />}
         {a.vehicle_class !== "pkw" && <Row k="Klasse" v={a.vehicle_class === "suv" ? "SUV / Geländewagen" : "Transporter / Bus"} />}
         <Row k="Leistung" v={a.service_name} />

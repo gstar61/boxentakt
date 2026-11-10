@@ -14,8 +14,9 @@ Start als Kopie des Codes von **Trimtable** (Friseur-Buchung, Repo `gstar61/Trim
 - **Plätze / Ressourcenplanung** (Migration `0024_resources.sql`): Tabelle `resources` (Hebebühne, Wuchtmaschine, sonstige), `services.resource_kind` („Braucht Platz“), `appointments.resource_id` mit Exclusion-Constraint `no_resource_double_booking`. Ein Termin belegt höchstens **einen** Platz; die Art folgt der Priorität Hebebühne > Wuchtmaschine > sonstige unter den gebuchten Leistungen. Hat ein Betrieb keinen aktiven Platz der Art, wird nichts geprüft. `book_services` und `reschedule_by_token` suchen einen freien Platz (beim Verschieben derselbe, sonst ein anderer der Art), `busy_resources(slug, von, bis)` liefert die Belegung für die Buchungsseite (`freeSlots(..., resources)` in `src/lib/time.ts`). Verwaltung: Einstellungen → Team & Zeiten (`ResourceSection`) und je Leistung „Braucht Platz“; Kalender-Tagesansicht hat den Schalter Mitarbeiter/Plätze; Termin eintragen und Verschieben im Dashboard vergeben den Platz über `pickPlace` (`_cal/data.ts`).
 - `0024` repariert außerdem `busy_intervals`: Termine ohne Anzahlung (leeres `payment_status`) fielen durch `not (null)` aus den belegten Zeiten.
 - Migrationen 0001–0024 sind gegen ein lokales PostgreSQL 16 mit Supabase-Stubs durchgelaufen und per SQL getestet (Buchung mit Fahrzeugklasse, Platzvergabe, Doppelbelegung gesperrt, Verschieben). Gegen ein echtes Supabase-Projekt noch nicht ausgeführt (keins angelegt).
-- Noch nicht gebaut: mehrere Plätze pro Termin (z. B. Hebebühne + Wuchtmaschine), Wartung/Sperrzeiten je Platz, Standorte, Flotten-Sammeltermine, RadsatzPro-Anbindung.
-- Infrastruktur (Supabase, Vercel, Stripe, Resend, DNS) ist noch **nicht** angelegt (Supabase scheiterte am Limit von 2 Gratis-Projekten, braucht Pro). Anleitung: `docs/betrieb.md`, Variablen: `.env.example`. Migration `0025_cron_key.sql` erzeugt den Cron-Schlüssel. Datenbanktests: `supabase/tests/run.sh`.
+- **RadsatzPro-Anbindung, Boxentakt-Seite** (Migration `0026_integrations.sql`, Vertrag in `docs/radsatzpro-schnittstelle.md`): Verbindung je Betrieb (`salon_integrations`, nur Inhaber), Ausgangswarteschlange `integration_events` mit Trigger auf `appointments`, Auslieferung in `src/lib/radsatzpro.ts` (sofort per `after()`, Wiederholung im täglichen Cron), Radsatz-Abfrage per Klick im Termin (`lookupRadsatz`), Einstellung `RadsatzProSection`. Die Gegenseite in RadsatzPro (Endpunkte `/api/integration/boxentakt/*`, Schlüsselverwaltung) ist noch nicht gebaut, bis dahin zeigt Boxentakt „RadsatzPro nicht verbunden“.
+- Noch nicht gebaut: mehrere Plätze pro Termin (z. B. Hebebühne + Wuchtmaschine), Wartung/Sperrzeiten je Platz, Standorte, Flotten-Sammeltermine.
+- Infrastruktur (Supabase, Vercel, Stripe, Resend, DNS) ist noch **nicht** angelegt (Supabase scheiterte am Limit von 2 Gratis-Projekten, braucht Pro). Anleitung: `docs/betrieb.md`, Variablen: `.env.example`. Migration `0025_cron_key.sql` erzeugt den Cron-Schlüssel. Datenbanktests: `supabase/tests/run.sh`, HTTP-Test der RadsatzPro-Schnittstelle: `npm run test:radsatz`.
 
 ## Geplanter Umbau
 1. Ressourcen ausbauen: mehrere Plätze pro Termin, Sperrzeiten/Wartung je Platz.
@@ -23,7 +24,7 @@ Start als Kopie des Codes von **Trimtable** (Friseur-Buchung, Repo `gstar61/Trim
 3. Weitere Leistungen im Startkatalog (Batterie, Klima, Reifenreparatur).
 4. Standorte und Flotten-Sammeltermine.
 5. Gutscheine prüfen, ob für Werkstätten sinnvoll.
-6. Anbindung an RadsatzPro (nach dem eigenständigen Start): API-Schlüssel + Webhooks, RadsatzPro bleibt führend für Kunde/Fahrzeug/Radsatz, Boxentakt für Termine/Kapazität. Keine gemeinsame Datenbank.
+6. Anbindung an RadsatzPro, Gegenseite in RadsatzPro bauen (Endpunkte, Schlüssel, Migration); RadsatzPro bleibt führend für Kunde/Fahrzeug/Radsatz, Boxentakt für Termine/Kapazität. Keine gemeinsame Datenbank.
 7. Google/SEO: Buchungslink im Unternehmensprofil, schema.org `AutoRepair`, Städteseiten.
 
 ## Zusammenarbeit
