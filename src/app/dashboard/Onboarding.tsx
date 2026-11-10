@@ -8,7 +8,7 @@ import { TextField } from "./ui";
 
 const ERRORS: Record<string, string> = {
   slug_taken: "Diese Adresse ist schon vergeben. Bitte eine andere wählen.",
-  invalid_name: "Bitte einen Salonnamen mit mindestens 2 Zeichen eintragen.",
+  invalid_name: "Bitte einen Namen des Betriebs mit mindestens 2 Zeichen eintragen.",
   not_confirmed: "Bitte zuerst die E-Mail-Adresse bestätigen.",
   too_many_salons: "Du hast bereits 3 Betriebe angelegt.",
 };

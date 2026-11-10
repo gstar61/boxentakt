@@ -37,10 +37,10 @@ Hinweis: Intern heißen Tabellen und Funktionen noch `salons`, `staff` usw. (Erb
 
 ## Lokal
 
+Komplett lokal mit Supabase-CLI (Docker) und Demo-Daten: [docs/lokal.md](docs/lokal.md).
+
 ```bash
-vercel env pull .env.local
-npm install
-npm run dev
+npm install && npx supabase start && npm run seed:demo && npm run dev
 ```
 
 Vor dem Commit: `npx tsc --noEmit && npx eslint src && npm run build`

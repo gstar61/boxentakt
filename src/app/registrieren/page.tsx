@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Check, MailCheck, X } from "lucide-react";
 import { browserClient } from "@/lib/supabase";
 import { Field } from "@/components/Field";
@@ -11,6 +12,7 @@ import { LogoMark } from "@/components/Logo";
 
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [salon, setSalon] = useState("");
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
@@ -40,18 +42,20 @@ export default function RegisterPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
-    if (salon.trim().length < 2) return setErr("Bitte den Salonnamen eintragen.");
+    if (salon.trim().length < 2) return setErr("Bitte den Namen des Betriebs eintragen.");
     if (finalSlug.length < 3 || slugOk === false) return setErr("Bitte eine freie Adresse für die Buchungsseite wählen.");
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return setErr("Bitte eine gültige E-Mail-Adresse eintragen.");
     if (password.length < 8) return setErr("Das Passwort braucht mindestens 8 Zeichen.");
     setBusy(true);
-    const { error } = await browserClient().auth.signUp({
+    const { data, error } = await browserClient().auth.signUp({
       email,
       password,
       options: { emailRedirectTo: `${location.origin}/login`, data: { salon_name: salon.trim(), salon_slug: finalSlug, staff_name: name.trim() } },
     });
     setBusy(false);
     if (error) return setErr(error.message.includes("registered") ? "Mit dieser E-Mail gibt es schon ein Konto. Bitte anmelden." : error.message);
+    // ohne E-Mail-Bestätigung (z. B. lokal) gibt es sofort eine Sitzung
+    if (data.session) return router.replace("/dashboard");
     setDone(true);
   }
 

@@ -88,7 +88,7 @@ export default function SettingsPage() {
   async function save() {
     setMsg(null);
     const cents = d.services.map((s) => Math.round(Number(s.price.replace(",", ".")) * 100));
-    if (!d.name.trim()) return setMsg({ text: "Bitte einen Salonnamen eintragen.", err: true });
+    if (!d.name.trim()) return setMsg({ text: "Bitte den Namen des Betriebs eintragen.", err: true });
     if (d.services.some((s) => !s.name.trim()) || cents.some((c) => !Number.isFinite(c) || c < 0)) return setMsg({ text: "Bitte alle Leistungen mit Name und Preis ausfüllen.", err: true });
     if (!d.staff.length || d.staff.some((s) => !s.name.trim())) return setMsg({ text: "Mindestens eine Person mit Namen eintragen.", err: true });
     if (Object.values(d.hours).some((h) => h && h.open[0] >= h.open[1])) return setMsg({ text: "Öffnungszeit: „bis“ muss nach „von“ liegen.", err: true });
