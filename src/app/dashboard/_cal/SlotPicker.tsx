@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { addDays, atLocal, freeSlots, hm, weekday, type Busy, type ResourceBusy } from "@/lib/time";
+import { addDays, atLocal, freeSlots, hm, placeGroups, weekday, type Busy, type ResourceBusy } from "@/lib/time";
 import { busyFor, busyPlaces, loadRange } from "./data";
 import { useSalon, type ResourceKind } from "../salon-context";
 
@@ -17,13 +17,13 @@ export function SlotPicker(props: {
   staffId: string;
   durationMin: number;
   ignoreId?: string;
-  /** Art des benötigten Platzes (z. B. Hebebühne); leer = keine Platzprüfung */
-  resourceKind?: ResourceKind | null;
+  /** Arten der benötigten Plätze (z. B. Hebebühne + Wuchtmaschine); leer = keine Platzprüfung */
+  resourceKinds?: ResourceKind[];
   value: number | null;
   onChange: (min: number | null) => void;
 }) {
   const key = `${props.date}|${props.staffId}`;
-  const { resources } = useSalon();
+  const { resources, salon } = useSalon();
   const [busy, setBusy] = useState<{ key: string; list: Busy[]; places: ResourceBusy[] } | null>(null);
 
   useEffect(() => {
@@ -37,14 +37,15 @@ export function SlotPicker(props: {
   }, [key, props.salonId, props.date, props.tz, props.staffId, props.ignoreId]);
 
   const list = busy?.key === key ? busy.list : null;
-  const placeIds = props.resourceKind ? resources.filter((r) => r.active && r.kind === props.resourceKind).map((r) => r.id) : [];
-  const placeKey = placeIds.join(",");
+  const groups = placeGroups(resources, props.resourceKinds ?? []);
+  const placeKey = groups.map((g) => g.join(",")).join(";");
+  const byPlace = salon.planning !== "mitarbeiter";
   const placesBusy = busy?.key === key ? busy.places : NO_PLACES;
   const options = useMemo(() => {
     if (!list) return [];
     const allDay = [{ weekday: weekday(props.date), opens: "06:00", closes: "22:00" }];
-    return freeSlots({ date: props.date, tz: props.tz, hours: allDay, step: props.step, durationMin: props.durationMin, staffIds: [props.staffId], busy: list, now: new Date(0), resources: placeKey ? { ids: placeKey.split(","), busy: placesBusy } : undefined });
-  }, [list, placesBusy, placeKey, props.date, props.tz, props.step, props.durationMin, props.staffId]);
+    return freeSlots({ date: props.date, tz: props.tz, hours: allDay, step: props.step, durationMin: props.durationMin, staffIds: [props.staffId], busy: list, now: new Date(0), resources: placeKey ? { groups: placeKey.split(";").map((g) => g.split(",")), busy: placesBusy, byPlace } : undefined });
+  }, [list, placesBusy, placeKey, byPlace, props.date, props.tz, props.step, props.durationMin, props.staffId]);
 
   // keep the selection valid when date, person or service changes
   const valid = props.value != null && options.some((o) => o.min === props.value);

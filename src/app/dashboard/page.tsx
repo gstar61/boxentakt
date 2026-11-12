@@ -73,10 +73,11 @@ export default function CalendarPage() {
   const [focus, setFocus] = useState<string | null>(null);
   // Tagesansicht nach Mitarbeitern oder nach Plätzen (Hebebühne …)
   const [lanes, setLanes] = useState<"staff" | "places">("staff");
-  const placeCols = resources.filter((r) => r.active || active.some((a) => a.resource_id === r.id));
+  const placeCols = resources.filter((r) => r.active || active.some((a) => (a.resource_ids ?? []).includes(r.id)));
   const byPlace = lanes === "places" && view === "day" && placeCols.length > 0;
-  const laneOf = (a: Appt) => (byPlace ? a.resource_id : a.staff_id);
-  const withoutPlace = byPlace ? active.filter((a) => !a.resource_id).length : 0;
+  // nach Plätzen erscheint ein Termin in jeder Spalte, die er belegt (z. B. Hebebühne und Wuchtmaschine)
+  const inLane = (a: Appt, id: string) => (byPlace ? (a.resource_ids ?? []).includes(id) : a.staff_id === id);
+  const withoutPlace = byPlace ? active.filter((a) => !(a.resource_ids ?? []).length).length : 0;
   const focused = focus === "all" ? null : columns.find((c) => c.id === focus) ?? columns[0];
   const dayColumns: { id: string; name: string }[] = byPlace ? placeCols : phone && view === "day" && focused && columns.length > 1 ? [focused] : columns;
   const revenue = active.filter((a) => a.status !== "nicht_erschienen").reduce((n, a) => n + a.price_cents, 0);
@@ -195,7 +196,7 @@ export default function CalendarPage() {
               <div key={s.id} className={`flex items-center gap-2.5 border-b border-line px-3 py-3.5 font-medium ${i ? "border-l" : ""}`}>
                 <span className="grid size-6.5 place-items-center rounded-lg bg-fg/7 text-xs font-semibold text-muted">{s.name.slice(0, 1).toUpperCase()}</span>
                 {s.name}
-                <span className="ml-auto font-mono text-xs text-muted">{active.filter((a) => laneOf(a) === s.id).length}</span>
+                <span className="ml-auto font-mono text-xs text-muted">{active.filter((a) => inLane(a, s.id)).length}</span>
               </div>
             ))}
             {timeAxis}
@@ -205,7 +206,7 @@ export default function CalendarPage() {
                 className={i ? "border-l border-line" : ""}
                 date={date} tz={tz} range={range} px={px} step={salon.slot_step}
                 intervals={dayHours(hours, date, closures)}
-                appts={active.filter((a) => laneOf(a) === s.id)}
+                appts={active.filter((a) => inLane(a, s.id))}
                 absences={byPlace ? [] : absencesFor(date, s.id)}
                 nowMin={date === today ? nowMin : null}
                 onEmpty={(min) => setOpen({ kind: "create", date, staffId: byPlace ? columns[0]?.id ?? "" : s.id, min })}

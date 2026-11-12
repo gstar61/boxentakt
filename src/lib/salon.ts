@@ -24,8 +24,10 @@ export type PublicSalon = {
   /** effective deposit in percent of the price, 0 = none */
   deposit_percent: number;
   staff: { id: string; name: string }[];
-  services: { id: string; name: string; duration_min: number; price_cents: number; resource_kind: "buehne" | "wuchtmaschine" | "sonstige" | null; /** differing prices per staff id */ staff_prices?: Record<string, number> }[];
+  services: { id: string; name: string; duration_min: number; price_cents: number; resource_kinds: ("buehne" | "wuchtmaschine" | "sonstige")[]; /** differing prices per staff id */ staff_prices?: Record<string, number> }[];
   hours: Hours[];
+  /** Planungsart: nach Plätzen (Standard) oder nach Mitarbeitern */
+  planning: "plaetze" | "mitarbeiter";
   /** aktive Plätze (Hebebühne …); Belegung kommt aus busy_resources */
   resources: { id: string; kind: "buehne" | "wuchtmaschine" | "sonstige"; name: string }[];
   /** Zuschlag je Fahrzeugklasse (Minuten, Cent) */

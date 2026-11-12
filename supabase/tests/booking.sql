@@ -84,4 +84,67 @@ begin
   assert (select resource_id is not null from public.appointments where license_plate = 'MA-AB 123'), 'Platz geblieben';
 end $$;
 
+-- 8) mehrere Plätze: Räderwechsel braucht Hebebühne + Wuchtmaschine
+insert into public.resources (salon_id, name, kind, sort) select id, 'Wuchtmaschine', 'wuchtmaschine', 3 from public.salons;
+update public.services set resource_kinds = '{buehne,wuchtmaschine}' where name like 'Räderwechsel (%';
+do $$
+declare r jsonb;
+begin
+  perform set_config('role', 'anon', true);
+  r := public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, current_setting('t.mon')::timestamptz + interval '1 day',
+                            'Erik Test', '0171 1000001', null, null, 'MA-MP 1', 'pkw', null);
+  perform set_config('role', 'postgres', true);
+  assert (select cardinality(resource_ids) from public.appointments where id = (r ->> 'id')::uuid) = 2, 'zwei Plätze belegt';
+  assert (select count(*) from public.appointment_resources where appointment_id = (r ->> 'id')::uuid and active) = 2, 'Belegungstabelle';
+  -- Hebebühne 2 wäre frei, die einzige Wuchtmaschine nicht
+  begin
+    perform set_config('role', 'anon', true);
+    perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, current_setting('t.mon')::timestamptz + interval '1 day',
+                                 'Fritz Test', '0171 1000002', null, null, 'MA-MP 2', 'pkw', null);
+    assert false, 'Wuchtmaschine belegt, hätte scheitern müssen';
+  exception when others then
+    assert sqlerrm like '%slot_taken%', 'erwartet slot_taken, war: ' || sqlerrm;
+  end;
+  perform set_config('role', 'postgres', true);
+  -- Storno gibt beide Plätze frei
+  update public.appointments set status = 'storniert' where id = (r ->> 'id')::uuid;
+  assert (select count(*) from public.appointment_resources where appointment_id = (r ->> 'id')::uuid and active) = 0, 'Storno gibt frei';
+  perform set_config('role', 'anon', true);
+  perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, current_setting('t.mon')::timestamptz + interval '1 day',
+                               'Fritz Test', '0171 1000002', null, null, 'MA-MP 2', 'pkw', null);
+  perform set_config('role', 'postgres', true);
+end $$;
+update public.services set resource_kinds = '{buehne}' where name like 'Räderwechsel (%';
+
+-- 9) Planungsart: nach Plätzen (Standard) darf derselbe Mitarbeiter doppelt; nach Mitarbeitern nicht
+update public.staff set active = false where name <> 'Max';
+do $$
+declare t timestamptz := current_setting('t.mon')::timestamptz + interval '2 days';
+begin
+  perform set_config('role', 'anon', true);
+  perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, t, 'Gina Test', '0171 2000001', null, null, 'MA-PL 1', 'pkw', null);
+  perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, t, 'Hans Test', '0171 2000002', null, null, 'MA-PL 2', 'pkw', null);
+  begin
+    perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, t, 'Ida Test', '0171 2000003', null, null, 'MA-PL 3', 'pkw', null);
+    assert false, 'beide Hebebühnen belegt, hätte scheitern müssen';
+  exception when others then
+    assert sqlerrm like '%slot_taken%', 'erwartet slot_taken, war: ' || sqlerrm;
+  end;
+  perform set_config('role', 'postgres', true);
+  assert (select count(*) from public.appointments where license_plate in ('MA-PL 1', 'MA-PL 2') and not staff_exclusive) = 2, 'nach Plätzen geplant';
+
+  update public.salons set planning = 'mitarbeiter';
+  perform set_config('role', 'anon', true);
+  perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, t + interval '3 hours', 'Jan Test', '0171 2000004', null, null, 'MA-PL 4', 'pkw', null);
+  begin
+    perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, t + interval '3 hours', 'Kai Test', '0171 2000005', null, null, 'MA-PL 5', 'pkw', null);
+    assert false, 'einziger Mitarbeiter belegt, hätte scheitern müssen';
+  exception when others then
+    assert sqlerrm like '%slot_taken%', 'erwartet slot_taken, war: ' || sqlerrm;
+  end;
+  perform set_config('role', 'postgres', true);
+  update public.salons set planning = 'plaetze';
+end $$;
+update public.staff set active = true;
+
 select 'booking.sql: alle Prüfungen bestanden' as ergebnis;

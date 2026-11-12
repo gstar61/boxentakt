@@ -26,12 +26,14 @@ export type Salon = {
   vouchers_enabled: boolean;
   /** Zuschlag je Fahrzeugklasse (Minuten, Cent) */
   class_extra: Record<"pkw" | "suv" | "transporter", { min: number; cents: number }>;
+  /** Planungsart: nach Plätzen (Standard) oder nach Mitarbeitern */
+  planning: "plaetze" | "mitarbeiter";
 };
 export type Staff = { id: string; name: string; active: boolean; sort: number };
 export type ResourceKind = "buehne" | "wuchtmaschine" | "sonstige";
 export const RESOURCE_KIND_LABEL: Record<ResourceKind, string> = { buehne: "Hebebühne", wuchtmaschine: "Wuchtmaschine", sonstige: "Sonstiger Platz" };
 export type Resource = { id: string; name: string; kind: ResourceKind; active: boolean; sort: number };
-export type Service = { id: string; name: string; duration_min: number; price_cents: number; active: boolean; sort: number; rebook_weeks: number | null; resource_kind: ResourceKind | null };
+export type Service = { id: string; name: string; duration_min: number; price_cents: number; active: boolean; sort: number; rebook_weeks: number | null; resource_kinds: ResourceKind[] };
 
 export type StaffPrice = { staff_id: string; service_id: string; price_cents: number };
 

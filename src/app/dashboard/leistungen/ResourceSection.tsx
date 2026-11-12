@@ -7,12 +7,25 @@ import { RESOURCE_KIND_LABEL, useSalon, type ResourceKind } from "../salon-conte
 
 type Row = { id: string; name: string; kind: ResourceKind };
 
-/** Plätze (Hebebühne, Wuchtmaschine …): ein Termin belegt einen Platz, solange er dauert. */
+/** Plätze (Hebebühne, Wuchtmaschine …): ein Termin belegt je benötigter Art einen Platz, solange er dauert. */
 export function ResourceSection() {
   const { salon, resources, reload } = useSalon();
   const [rows, setRows] = useState<Row[]>(() => resources.filter((r) => r.active).map((r) => ({ id: r.id, name: r.name, kind: r.kind })));
   const [msg, setMsg] = useState<{ text: string; err?: boolean } | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const [planning, setPlanning] = useState(salon.planning ?? "plaetze");
+  async function savePlanning(v: "plaetze" | "mitarbeiter") {
+    const prev = planning;
+    setPlanning(v);
+    const { error } = await browserClient().from("salons").update({ planning: v }).eq("id", salon.id);
+    if (error) {
+      setPlanning(prev);
+      return setMsg({ text: "Speichern fehlgeschlagen.", err: true });
+    }
+    await reload();
+    setMsg({ text: "Gespeichert" });
+  }
 
   async function save() {
     if (rows.some((r) => r.name.trim().length < 1 || r.name.trim().length > 60)) return setMsg({ text: "Bitte jedem Platz einen Namen geben.", err: true });
@@ -39,10 +52,26 @@ export function ResourceSection() {
         <div className="grid gap-1">
           <h2 className="text-[15px] font-semibold">Plätze</h2>
           <p className="text-sm text-muted">
-            Hebebühnen und Maschinen, die ein Termin belegt. Bei Leistungen wählst du, welchen Platz sie brauchen. Gibt es keinen Platz dieser Art, wird nichts geprüft.
+            Hebebühnen und Maschinen, die ein Termin belegt. Bei Leistungen wählst du, welche Plätze sie brauchen (auch mehrere). Gibt es keinen Platz dieser Art, wird nichts geprüft.
           </p>
         </div>
         <button className="btn btn-sm" onClick={() => setRows([...rows, { id: crypto.randomUUID(), name: "", kind: "buehne" }])}><Plus size={16} /> Platz</button>
+      </div>
+      <div className="grid gap-1.5">
+        <span className="text-[13px] text-muted">Freie Zeiten planen nach</span>
+        <div className="flex w-fit rounded-xl border border-line bg-card p-1" role="radiogroup" aria-label="Planung nach">
+          {([["plaetze", "Plätzen"], ["mitarbeiter", "Mitarbeitern"]] as const).map(([v, label]) => (
+            <button key={v} role="radio" aria-checked={planning === v} onClick={() => planning !== v && savePlanning(v)}
+              className="rounded-lg px-3 py-1.5 text-sm text-muted aria-checked:bg-accent aria-checked:text-accent-ink">
+              {label}
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-dim">
+          {planning === "plaetze"
+            ? "Eine Zeit ist frei, wenn die nötigen Plätze frei sind. Mitarbeiter dürfen mehrere Termine gleichzeitig haben."
+            : "Eine Zeit ist frei, wenn die Plätze frei sind und ein Mitarbeiter Zeit hat."}
+        </p>
       </div>
       {rows.length === 0 && <p className="text-sm text-muted">Noch keine Plätze. Ohne Plätze wird nur die Auslastung der Mitarbeiter geplant.</p>}
       {rows.map((r, i) => (

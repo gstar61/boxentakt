@@ -5,10 +5,16 @@ export type Hours = { weekday: number; opens: string; closes: string };
 export type Busy = { staff_id: string; starts_at: string; ends_at: string };
 export type ResourceBusy = { resource_id: string; starts_at: string; ends_at: string };
 
-/** Platz-Priorität bei mehreren Leistungen: Hebebühne vor Wuchtmaschine vor Sonstigem (wie in book_services). */
+/** Platz-Arten, Reihenfolge wie in der Datenbank (Hebebühne vor Wuchtmaschine vor Sonstigem). */
 const KIND_RANK = { buehne: 1, wuchtmaschine: 2, sonstige: 3 } as const;
-export function neededKind(kinds: (keyof typeof KIND_RANK | null | undefined)[]) {
-  return kinds.filter((k): k is keyof typeof KIND_RANK => !!k).sort((a, b) => KIND_RANK[a] - KIND_RANK[b])[0] ?? null;
+export type PlaceKind = keyof typeof KIND_RANK;
+/** Alle Platz-Arten, die die gewählten Leistungen zusammen brauchen (ohne Doppelte). */
+export function neededKinds(lists: (readonly PlaceKind[] | null | undefined)[]) {
+  return [...new Set(lists.flatMap((l) => l ?? []))].sort((a, b) => KIND_RANK[a] - KIND_RANK[b]);
+}
+/** Je benötigter Art die passenden Plätze; Arten ohne angelegten Platz fallen weg (werden nicht geprüft). */
+export function placeGroups(places: { id: string; kind: PlaceKind; active?: boolean }[], kinds: PlaceKind[]) {
+  return kinds.map((k) => places.filter((p) => p.kind === k && p.active !== false).map((p) => p.id)).filter((g) => g.length > 0);
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -97,14 +103,16 @@ export function freeSlots(opts: {
   busy: Busy[];
   now?: Date;
   closures?: Closures;
-  /** Plätze, von denen zur Startzeit mindestens einer frei sein muss; leer/fehlend = keine Platzprüfung */
-  resources?: { ids: string[]; busy: ResourceBusy[] };
+  /** Je Platz-Art die Plätze, von denen einer die ganze Dauer frei sein muss; leer/fehlend = keine Platzprüfung.
+   *  byPlace: Betrieb plant nach Plätzen, dann zählt der Mitarbeiter nicht (bevorzugt wird trotzdem ein freier). */
+  resources?: { groups: string[][]; busy: ResourceBusy[]; byPlace?: boolean };
 }) {
   const intervals = dayHours(opts.hours, opts.date, opts.closures);
   const earliest = (opts.now ?? new Date()).getTime() + 15 * 60_000;
   const busy = opts.busy.map((b) => ({ staff: b.staff_id, s: +new Date(b.starts_at), e: +new Date(b.ends_at) }));
   const rBusy = (opts.resources?.busy ?? []).map((b) => ({ id: b.resource_id, s: +new Date(b.starts_at), e: +new Date(b.ends_at) }));
-  const rIds = opts.resources?.ids ?? [];
+  const groups = opts.resources?.groups ?? [];
+  const byPlace = !!opts.resources?.byPlace && groups.length > 0;
   const out: { min: number; start: Date; staffId: string }[] = [];
   for (const h of intervals) {
     for (let t = toMin(h.opens); t + opts.durationMin <= toMin(h.closes); t += opts.step) {
@@ -112,10 +120,10 @@ export function freeSlots(opts: {
       const s = start.getTime();
       if (s < earliest) continue;
       const e = s + opts.durationMin * 60_000;
-      const staffId = opts.staffIds.find((id) => !busy.some((b) => b.staff === id && s < b.e && b.s < e));
+      const staffId = opts.staffIds.find((id) => !busy.some((b) => b.staff === id && s < b.e && b.s < e)) ?? (byPlace ? opts.staffIds[0] : undefined);
       if (!staffId) continue;
-      // ein Platz (z. B. Hebebühne) muss für die ganze Dauer frei sein
-      if (rIds.length && !rIds.some((id) => !rBusy.some((b) => b.id === id && s < b.e && b.s < e))) continue;
+      // je benötigter Art muss ein Platz (z. B. Hebebühne, Wuchtmaschine) die ganze Dauer frei sein
+      if (groups.some((g) => !g.some((id) => !rBusy.some((b) => b.id === id && s < b.e && b.s < e)))) continue;
       out.push({ min: t, start, staffId });
     }
   }

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import { ArrowLeft, BellPlus, Gift, CalendarCheck2, CalendarPlus, CalendarX2, Check, Clock3, Info, MapPin, Navigation, Phone, Plus } from "lucide-react";
 import { browserClient } from "@/lib/supabase";
-import { addDays, duration, euro, euroFrom, dayHours, dayNote, freeSlots, groupDays, neededKind, type ResourceBusy, fullDateTime, hm, longDate, shortDay, shortMonth, weekday, zonedDate, type Busy } from "@/lib/time";
+import { addDays, duration, euro, euroFrom, dayHours, dayNote, freeSlots, groupDays, neededKinds, placeGroups, type ResourceBusy, fullDateTime, hm, longDate, shortDay, shortMonth, weekday, zonedDate, type Busy } from "@/lib/time";
 import { bookAction, joinWaitlistAction } from "../actions";
 import { Field } from "@/components/Field";
 import { LogoMark } from "@/components/Logo";
@@ -55,7 +55,7 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
     ? {
         id: chosen[0].id,
         name: chosen.map((s) => s.name).join(" + "),
-        resource_kind: neededKind(chosen.map((s) => s.resource_kind)),
+        resource_kinds: neededKinds(chosen.map((s) => s.resource_kinds)),
         // Fahrzeugklasse: Zuschlag in Minuten und Cent einmal je Termin
         duration_min: chosen.reduce((n, s) => n + s.duration_min, 0) + extra.min,
         price_cents: chosen.reduce((n, s) => n + s.price_cents, 0) + extra.cents,
@@ -78,8 +78,8 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
   }, [date, salon.slug, reload]);
 
   const totalMin = service?.duration_min ?? 0;
-  // Platz (z. B. Hebebühne): nur prüfen, wenn der Betrieb solche Plätze angelegt hat
-  const placeIds = service?.resource_kind ? salon.resources.filter((r) => r.kind === service.resource_kind).map((r) => r.id) : [];
+  // Plätze (z. B. Hebebühne + Wuchtmaschine): nur Arten prüfen, die der Betrieb angelegt hat
+  const groups = service ? placeGroups(salon.resources, service.resource_kinds) : [];
   // React Compiler memoizes this; a manual useMemo trips over the derived service object
   const slots = !totalMin || !busy ? [] : freeSlots({
       date,
@@ -90,7 +90,7 @@ export default function BookingClient({ salon, aborted, initialDay, initialServi
       staffIds: staffId === "any" ? salon.staff.map((s) => s.id) : [staffId],
       busy,
       closures: salon,
-      resources: placeIds.length ? { ids: placeIds, busy: busyState?.places ?? [] } : undefined,
+      resources: groups.length ? { groups, busy: busyState?.places ?? [], byPlace: salon.planning !== "mitarbeiter" } : undefined,
     });
   const picked = slots.find((s) => s.start.toISOString() === startIso);
   const nextOpen = days.find((d) => d > date && dayHours(salon.hours, d, salon).length > 0);
