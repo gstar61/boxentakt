@@ -147,4 +147,34 @@ begin
 end $$;
 update public.staff set active = true;
 
+-- 10) Sperrzeiten: einmalig (Do 10–12) und wöchentlich (Fr 8–10) für beide Hebebühnen
+insert into public.resource_blocks (salon_id, resource_id, during, reason)
+select r.salon_id, r.id, tstzrange(current_setting('t.mon')::timestamptz + interval '3 days', current_setting('t.mon')::timestamptz + interval '3 days 2 hours'), 'Wartung'
+  from public.resources r where r.kind = 'buehne';
+insert into public.resource_blocks (salon_id, resource_id, weekday, starts, ends, reason)
+select r.salon_id, r.id, 5, '08:00', '10:00', 'Prüfung' from public.resources r where r.kind = 'buehne';
+do $$
+declare thu timestamptz := current_setting('t.mon')::timestamptz + interval '3 days';
+        fri timestamptz := current_setting('t.mon')::timestamptz + interval '4 days' - interval '2 hours';
+begin
+  perform set_config('role', 'anon', true);
+  begin
+    perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, thu, 'Lea Test', '0171 3000001', null, null, 'MA-SP 1', 'pkw', null);
+    assert false, 'gesperrte Hebebühnen, hätte scheitern müssen';
+  exception when others then
+    assert sqlerrm like '%slot_taken%', 'erwartet slot_taken, war: ' || sqlerrm;
+  end;
+  perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, thu + interval '3 hours', 'Lea Test', '0171 3000001', null, null, 'MA-SP 1', 'pkw', null);
+  begin
+    perform public.book_services('test-werk', array[current_setting('t.raed')::uuid], null, fri, 'Mia Test', '0171 3000002', null, null, 'MA-SP 2', 'pkw', null);
+    assert false, 'wöchentliche Sperre, hätte scheitern müssen';
+  exception when others then
+    assert sqlerrm like '%slot_taken%', 'erwartet slot_taken, war: ' || sqlerrm;
+  end;
+  -- HU/AU braucht keinen Platz, Sperre egal
+  perform public.book_services('test-werk', array[current_setting('t.hu')::uuid], null, fri, 'Mia Test', '0171 3000002', null, null, 'MA-SP 2', 'pkw', null);
+  assert (select count(*) from public.busy_resources('test-werk', thu - interval '1 hour', thu + interval '3 hours')) >= 2, 'Sperre in busy_resources';
+  perform set_config('role', 'postgres', true);
+end $$;
+
 select 'booking.sql: alle Prüfungen bestanden' as ergebnis;

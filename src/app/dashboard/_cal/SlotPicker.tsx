@@ -29,7 +29,7 @@ export function SlotPicker(props: {
   useEffect(() => {
     let live = true;
     loadRange(props.salonId, atLocal(props.date, 0, props.tz), atLocal(addDays(props.date, 1), 0, props.tz))
-      .then(({ appts, absences }) => live && setBusy({ key, list: busyFor(appts, absences, [props.staffId], props.ignoreId), places: busyPlaces(appts, props.ignoreId) }))
+      .then(({ appts, absences, blocks }) => live && setBusy({ key, list: busyFor(appts, absences, [props.staffId], props.ignoreId), places: busyPlaces(appts, props.ignoreId, blocks) }))
       .catch(() => live && setBusy({ key, list: [], places: [] }));
     return () => {
       live = false;

@@ -7,7 +7,7 @@ import { useSalon } from "./salon-context";
 import { browserClient } from "@/lib/supabase";
 import { flushIntegrationEvents } from "./integration-actions";
 import { Legend, Stat } from "./ui";
-import { loadRange, type Absence, type Appt } from "./_cal/data";
+import { loadRange, type Absence, type Appt, type Block } from "./_cal/data";
 import { Lane } from "./_cal/Lane";
 import { AppointmentDrawer } from "./_cal/AppointmentDrawer";
 import { CreateDialog } from "./_cal/CreateDialog";
@@ -32,7 +32,7 @@ export default function CalendarPage() {
   const last = view === "day" ? date : addDays(first, 6);
   const days = view === "day" ? [date] : Array.from({ length: 7 }, (_, i) => addDays(first, i));
   const key = `${first}|${last}`;
-  const [data, setData] = useState<{ key: string; appts: Appt[]; absences: Absence[] } | null>(null);
+  const [data, setData] = useState<{ key: string; appts: Appt[]; absences: Absence[]; blocks: Block[] } | null>(null);
   const [open, setOpen] = useState<{ kind: "appt" | "absence"; id: string } | { kind: "create"; date: string; staffId: string; min: number | null } | { kind: "newAbsence" } | null>(null);
   const [toast, setToast] = useState<{ text: string; err?: boolean } | null>(null);
   const [now, setNow] = useState(() => new Date());
@@ -65,6 +65,7 @@ export default function CalendarPage() {
   const current = data?.key === key ? data : null;
   const appts = current?.appts ?? [];
   const absences = current?.absences ?? [];
+  const blocks = current?.blocks ?? [];
   const active = appts.filter((a) => a.status !== "storniert");
   const cancelled = appts.filter((a) => a.status === "storniert");
   const columns = staff.filter((s) => s.active || active.some((a) => a.staff_id === s.id));
@@ -100,6 +101,14 @@ export default function CalendarPage() {
   const labels = Array.from({ length: (range[1] - range[0]) / 60 + 1 }, (_, i) => range[0] + i * 60);
 
   const onDay = (d: string) => (a: { start: Date }) => zonedDate(a.start, tz) === d;
+  // Sperrzeiten eines Platzes als graue Felder in der Plätze-Ansicht (Klick öffnet nichts)
+  const blocksFor = (d: string, placeId: string): Absence[] => {
+    const s = atLocal(d, 0, tz).getTime();
+    const e = atLocal(addDays(d, 1), 0, tz).getTime();
+    return blocks
+      .filter((b) => b.resource_id === placeId && b.start.getTime() < e && b.end.getTime() > s)
+      .map((b) => ({ id: `blk-${b.id}`, staff_id: null, start: b.start, end: b.end, reason: b.reason || "Gesperrt" }));
+  };
   const absencesFor = (d: string, staffId: string) => {
     const s = atLocal(d, 0, tz).getTime();
     const e = atLocal(addDays(d, 1), 0, tz).getTime();
@@ -207,11 +216,11 @@ export default function CalendarPage() {
                 date={date} tz={tz} range={range} px={px} step={salon.slot_step}
                 intervals={dayHours(hours, date, closures)}
                 appts={active.filter((a) => inLane(a, s.id))}
-                absences={byPlace ? [] : absencesFor(date, s.id)}
+                absences={byPlace ? blocksFor(date, s.id) : absencesFor(date, s.id)}
                 nowMin={date === today ? nowMin : null}
                 onEmpty={(min) => setOpen({ kind: "create", date, staffId: byPlace ? columns[0]?.id ?? "" : s.id, min })}
                 onOpenAppt={(id) => setOpen({ kind: "appt", id })}
-                onOpenAbsence={(id) => setOpen({ kind: "absence", id })}
+                onOpenAbsence={(id) => !id.startsWith("blk-") && setOpen({ kind: "absence", id })}
               />
             ))}
           </div>

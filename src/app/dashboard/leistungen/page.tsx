@@ -15,6 +15,7 @@ import { PushSection } from "./PushSection";
 import { StaffPriceSection } from "./StaffPriceSection";
 import { VehicleClassSection } from "./VehicleClassSection";
 import { ResourceSection } from "./ResourceSection";
+import { BlockSection } from "./BlockSection";
 import { RadsatzProSection } from "./RadsatzProSection";
 import { ClosuresSection } from "./ClosuresSection";
 import { DataSection } from "./DataSection";
@@ -220,6 +221,7 @@ export default function SettingsPage() {
           {tab === "team" && (
             <>
               <ResourceSection />
+              <BlockSection />
               <div className="grid items-start gap-6 xl:grid-cols-2">
                 <section className="card grid content-start gap-4 p-5 sm:p-6">
                   <div className="flex items-center justify-between gap-3">
